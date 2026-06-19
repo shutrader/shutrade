@@ -159,7 +159,6 @@
       <a href="#curriculum">カリキュラム</a>
       <a href="#saved">保存した教材</a>
       <a href="#tools">ツール</a>
-      <a href="#archive">Xアーカイブ</a>
       <a href="#feedback">要望箱</a>
     </nav>
     <a class="xbtn line-cta" id="line-top" href="#" target="_blank" rel="noopener">LINEで相談</a>
@@ -221,35 +220,13 @@
     </div>
   </section>
 
-  <section class="block wrap" id="archive">
-    <div class="kicker">X ARCHIVE</div>
-    <h2>Xアーカイブ</h2>
-    <p class="sub">𝕏 での発信をテーマ別にまとめています。タップすると該当ポストへ移動します。</p>
-    <div class="chips" id="chips"></div>
-    <div class="arc" id="arc-list"></div>
-  </section>
-
   <section class="block wrap" id="feedback">
     <div class="kicker">REQUEST BOX</div>
     <h2>要望箱</h2>
     <p class="sub">「こんな教材がほしい」「ここが分かりにくい」など、サイトを良くするための声を聞かせてください。</p>
-    <div class="panel">
-      <form id="fb-form">
-        <div class="field">
-          <label for="fb-type">種類</label>
-          <select id="fb-type"><option>教材のリクエスト</option><option>質問</option><option>改善の提案</option><option>その他</option></select>
-        </div>
-        <div class="field">
-          <label for="fb-body">内容</label>
-          <textarea id="fb-body" placeholder="ご自由にお書きください。" required></textarea>
-        </div>
-        <div class="field">
-          <label for="fb-contact">連絡先（任意・𝕏のIDなど）</label>
-          <input id="fb-contact" type="text" placeholder="返信が必要な場合のみ">
-        </div>
-        <button class="btn-gold" type="submit">送信する</button>
-        <div class="fb-msg" id="fb-msg"></div>
-      </form>
+    <div class="panel" style="text-align:center">
+      <p style="font-size:14px;color:var(--muted);margin-bottom:18px;line-height:1.9">ご要望・ご質問は、LINEから直接お送りください。<br>いただいた声は、教材やツールの改善に役立てます。</p>
+      <a class="btn-gold line-cta" href="#" target="_blank" rel="noopener" style="display:inline-block">LINEで要望・質問を送る</a>
     </div>
   </section>
 </main>
@@ -276,10 +253,6 @@ const CONFIG = {
 
   // LINE相談ボタンのリンク先。LINE公式アカウントの友だち追加URL( https://lin.ee/xxxx 等 )を貼ってください。
   lineUrl: "https://lin.ee/z3J2oRK",
-
-  // 要望箱の送信先。Formspree( https://formspree.io )で無料フォームを作り、
-  // 発行された https://formspree.io/f/xxxxxxxx を貼り替えてください。
-  feedbackEndpoint: "https://formspree.io/f/XXXXXXXX",
 
   // カリキュラム。各 lesson に url を入れると「開く」が有効になります（教材公開後に追記）。
   curriculum: [
@@ -312,14 +285,6 @@ const CONFIG = {
     ]},
   ],
 
-  // Xアーカイブ。投稿のたびに { title, url(該当ポストURL), date, cat } を1行足すだけ。
-  xArchive: [
-    {title:"XAU/USD 週間環境認識｜FOMC前のシナリオ分岐", url:"https://x.com/m_daichi_fx3", date:"2026.06.18", cat:"ファンダ"},
-    {title:"損切りが遅れる人の共通点と、置き方のルール", url:"https://x.com/m_daichi_fx3", date:"2026.06.17", cat:"メンタル"},
-    {title:"USD/JPY 今週の節目とトレード戦略", url:"https://x.com/m_daichi_fx3", date:"2026.06.16", cat:"テクニカル"},
-    {title:"ゴトー日と仲値、東京時間の値動きの考え方", url:"https://x.com/m_daichi_fx3", date:"2026.06.13", cat:"小ネタ"},
-    {title:"資金管理が9割。1〜2%ルールの実践", url:"https://x.com/m_daichi_fx3", date:"2026.06.11", cat:"資金管理"},
-  ],
 };
 
 /* ============================================================
@@ -403,40 +368,7 @@ function renderSaved(){
   }).join("")}</div>`;
 }
 
-let arcFilter="すべて";
-function renderArchive(){
-  const cats=["すべて",...[...new Set(CONFIG.xArchive.map(a=>a.cat))]];
-  document.getElementById("chips").innerHTML = cats.map(c=>
-    `<button class="chip ${c===arcFilter?'on':''}" onclick="setFilter('${c}')">${c}</button>`).join("");
-  const list = CONFIG.xArchive.filter(a=>arcFilter==="すべて"||a.cat===arcFilter);
-  document.getElementById("arc-list").innerHTML = list.map(a=>
-    `<a class="arc-item" href="${a.url}" target="_blank" rel="noopener">
-      <div class="arc-main"><div class="t">${a.title}</div>
-      <div class="arc-meta"><span class="mono">${a.date}</span><span class="arc-cat">${a.cat}</span></div></div>
-      <i class="go">↗</i>
-    </a>`).join("");
-}
-function setFilter(c){ arcFilter=c; renderArchive(); }
-
-document.getElementById("fb-form").addEventListener("submit", async (e)=>{
-  e.preventDefault();
-  const msg=document.getElementById("fb-msg");
-  const body=document.getElementById("fb-body").value.trim();
-  if(!body) return;
-  if(CONFIG.feedbackEndpoint.includes("XXXXXXXX")){
-    msg.style.display="block"; msg.style.color="var(--gold-deep)";
-    msg.textContent="送信先フォームが未設定です。CONFIG.feedbackEndpoint に Formspree のURLを設定してください。";
-    return;
-  }
-  try{
-    const res=await fetch(CONFIG.feedbackEndpoint,{method:"POST",headers:{"Accept":"application/json"},
-      body:JSON.stringify({type:document.getElementById("fb-type").value,body,contact:document.getElementById("fb-contact").value})});
-    if(res.ok){ e.target.reset(); msg.style.display="block"; msg.style.color="var(--ok)"; msg.textContent="送信しました。ありがとうございます。"; }
-    else throw 0;
-  }catch(_){ msg.style.display="block"; msg.style.color="#a3403a"; msg.textContent="送信に失敗しました。時間をおいて再度お試しください。"; }
-});
-
-renderLevels(); renderSaved(); renderArchive();
+renderLevels(); renderSaved();
 </script>
 </body>
 </html>

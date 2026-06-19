@@ -1,20 +1,15 @@
 シュウ トレードマネジメント — 公開フォルダ（完成版・全31ファイル）
 
-そのまま公開できます。
-
 【公開方法】
 このフォルダを app.netlify.com/drop にフォルダごとドラッグ&ドロップ。
-index.html がトップページになります。
+（URLを変えたくない場合は、Netlifyの既存サイトのDeploys画面に上書きで投入）
+index.html がトップになります。ファイルは平置きのまま（サブフォルダ禁止）。
 
-【任意】
-要望箱を使う場合は、index.html 末尾の CONFIG.feedbackEndpoint に
-Formspree( https://formspree.io )の無料フォームURLを設定してください。
-
-【注意】
-ファイルはこの階層に平置きのまま。サブフォルダを作らないこと。
+【要望箱】LINE送信に変更済み（Formspree等は不要）。
+【Xアーカイブ】廃止しました。XへのリンクはフッターのXハンドルのみ。
 
 【内訳】
 index.html / diagnosis.html
-ツール8本: indicator-checker, lot-calculator, risk-reward, pip-calculator,
-           compound-simulator, trade-journal, session-clock, scenario-tree
-教材21本: lesson-b1〜b6 / lesson-i1〜i8 / lesson-a1〜a7
+ツール8本 / 教材21本（lesson-b1〜a7）
+
+※ lp.html（X固定ポスト用LP）は別運用（別途案内）。archive-tool.html は不要になりました。
