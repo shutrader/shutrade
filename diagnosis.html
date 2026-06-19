@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>無料トレード診断｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:720px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy)}.back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}.bar .here{font-size:13px;color:var(--muted)}
+  main{padding:34px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  .sub{font-size:13.5px;color:var(--muted);margin-bottom:26px;max-width:42em}
+
+  .prog{height:5px;background:var(--line);border-radius:3px;overflow:hidden;margin-bottom:8px}
+  .prog i{display:block;height:100%;background:var(--gold);width:0;transition:width .3s}
+  .pnum{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--faint);margin-bottom:20px}
+  .q{font-size:19px;font-weight:700;color:var(--navy);margin-bottom:4px}
+  .qhint{font-size:12px;color:var(--muted);margin-bottom:18px}
+  .opts{display:grid;gap:10px}
+  .opt{text-align:left;background:var(--card);border:.5px solid var(--line-strong);border-radius:11px;padding:15px 18px;font-size:14.5px;color:var(--ink);transition:.12s;display:flex;align-items:center;gap:12px}
+  .opt:hover{border-color:var(--gold)}
+  .opt.sel{border-color:var(--gold);background:#fbfaf6}
+  .opt .mk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--line-strong);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff}
+  .opt.sel .mk{background:var(--gold);border-color:var(--gold)}
+  .nav{display:flex;justify-content:space-between;margin-top:24px;gap:12px}
+  .btn-gold{background:var(--gold);color:#2a2008;font-weight:500;font-size:14px;padding:12px 24px;border:none;border-radius:8px}
+  .btn-gold:disabled{background:#e7dcc2;color:#a99;cursor:not-allowed}
+  .btn-ghost{background:none;border:.5px solid var(--line-strong);color:var(--muted);font-size:13px;padding:12px 18px;border-radius:8px}
+  .btn-ghost:hover{color:var(--ink)}
+
+  /* result */
+  .summary{background:var(--navy);color:#fff;border-radius:14px;padding:24px;margin-bottom:24px}
+  .summary .st{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.2em;color:var(--gold);margin-bottom:10px}
+  .summary .stype{font-size:20px;font-weight:700;line-height:1.5;margin-bottom:8px}
+  .summary .sline{font-size:13.5px;color:#c3ccdb;line-height:1.8}
+  .rsec{margin-bottom:30px}
+  .rsec h2{font-size:16px;color:var(--navy);font-weight:700;margin-bottom:4px}
+  .rsec .rh{font-size:12px;color:var(--muted);margin-bottom:14px}
+  .mod{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:0 12px 12px 0;padding:16px 18px;margin-bottom:12px}
+  .mod h3{font-size:14.5px;color:var(--navy);font-weight:700;margin-bottom:6px}
+  .mod p{font-size:13.5px;line-height:1.8;color:var(--ink);margin-bottom:8px}
+  .mlinks{display:flex;flex-wrap:wrap;gap:8px}
+  .mlinks a{font-size:12px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:7px;padding:6px 11px}
+  .mlinks a:hover{border-color:var(--gold)}
+  .path{counter-reset:s;display:grid;gap:8px}
+  .path a{display:flex;align-items:center;gap:12px;background:var(--card);border:.5px solid var(--line);border-radius:10px;padding:12px 16px;font-size:14px}
+  .path a:hover{border-color:var(--gold)}
+  .path a::before{counter-increment:s;content:counter(s,decimal-leading-zero);font-family:'Roboto Mono',monospace;color:var(--gold);font-size:14px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips a{font-size:13px;background:var(--card);border:.5px solid var(--line-strong);border-radius:20px;padding:8px 15px}
+  .chips a:hover{border-color:var(--gold)}
+  .cta-line{display:block;text-align:center;background:var(--gold);color:#2a2008;font-weight:500;font-size:14px;padding:13px;border-radius:10px;margin-top:8px}
+  .restart{display:block;margin:20px auto 0;}
+  footer{border-top:.5px solid var(--line);margin-top:30px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">無料トレード診断</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">FREE DIAGNOSIS</div>
+  <h1>あなたに最適な学習プラン診断</h1>
+  <p class="sub">7つの質問に答えると、いまのあなたに必要な「処方箋」と、学ぶ順番・使うツールを提案します。所要30秒・登録不要。</p>
+
+  <div id="stepper"></div>
+  <div id="result" style="display:none"></div>
+
+  <footer><p class="disc">※本診断は投資教育を目的とした一般的な学習案内であり、特定の金融商品の売買を推奨・助言するものではありません。最終判断はご自身の責任で行ってください。</p></footer>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const LINE_URL="https://lin.ee/z3J2oRK";
+
+const LESSONS={
+ b1:["環境認識の基礎","lesson-b1.html"],b2:["資金管理 ― 1〜2%ルール","lesson-b2.html"],b3:["損切りをルール化する","lesson-b3.html"],
+ b4:["メンタルと規律","lesson-b4.html"],b5:["通貨ペア・銘柄の特性","lesson-b5.html"],b6:["トレード記録の付け方","lesson-b6.html"],
+ i1:["ダウ理論と環境認識","lesson-i1.html"],i2:["マルチタイムフレーム分析","lesson-i2.html"],i3:["水平線とトレンドライン","lesson-i3.html"],
+ i4:["インジケーターの本当の使い方","lesson-i4.html"],i5:["エントリーとイグジットの設計","lesson-i5.html"],i6:["リスクリワードの考え方","lesson-i6.html"],
+ i7:["検証（バックテスト）のやり方","lesson-i7.html"],i8:["チャートパターン","lesson-i8.html"],
+ a1:["金利と雇用の読み方","lesson-a1.html"],a2:["FOMCとBOJの立ち回り","lesson-a2.html"],a3:["NFPでの立ち回り","lesson-a3.html"],
+ a4:["CME FedWatchの使い方","lesson-a4.html"],a5:["実質金利とゴールド","lesson-a5.html"],a6:["インターマーケット分析","lesson-a6.html"],a7:["シナリオプランニング","lesson-a7.html"],
+};
+const TOOLS={
+ lot:["ロット計算","lot-calculator.html"],rr:["リスクリワード＆勝率","risk-reward.html"],pip:["pips・損益計算","pip-calculator.html"],
+ comp:["複利シミュレーター","compound-simulator.html"],jr:["トレード記録","trade-journal.html"],sess:["セッション時計","session-clock.html"],
+ ind:["米国指標チェッカー","indicator-checker.html"],scn:["シナリオツリー","scenario-tree.html"],
+};
+
+const QUESTIONS=[
+ {key:"level",q:"いまの経験レベルは？",type:"single",opts:[
+   {l:"これから始める／始めて数ヶ月",t:["beginner"]},
+   {l:"基本はわかるが、勝ちきれない",t:["intermediate"]},
+   {l:"手法はある。さらに改善したい",t:["advanced"]},
+ ]},
+ {key:"inst",q:"主に取引したい（している）銘柄は？",type:"single",opts:[
+   {l:"USD/JPY",t:["usdjpy"]},{l:"ゴールド（XAU/USD）",t:["gold"]},
+   {l:"その他の通貨ペア",t:["fx"]},{l:"暗号資産（BTCなど）",t:["crypto"]},
+ ]},
+ {key:"style",q:"トレードスタイルは（希望でもOK）？",type:"single",opts:[
+   {l:"スキャルピング（数分）",t:["scalp"]},{l:"デイトレード（数時間）",t:["day"]},
+   {l:"スイング（数日〜）",t:["swing"]},{l:"まだ決まっていない",t:["style-x"]},
+ ]},
+ {key:"time",q:"取引に使える時間は？",type:"single",opts:[
+   {l:"日中はほぼ無理（兼業・夜中心）",t:["parttime"]},
+   {l:"日中も少しは見られる",t:["some-time"]},
+   {l:"専業・時間に余裕がある",t:["full-time"]},
+ ]},
+ {key:"cap",q:"運用資金の規模は？",type:"single",opts:[
+   {l:"〜10万円",t:["cap-small"]},{l:"10〜50万円",t:["cap-mid"]},
+   {l:"50〜300万円",t:["cap-large"]},{l:"300万円〜",t:["cap-xlarge"]},
+ ]},
+ {key:"prob",q:"いま一番の悩みは？（複数選択可）",type:"multi",opts:[
+   {l:"損切りができない",t:["p-losscut"]},{l:"手法が定まらない（コロコロ変える）",t:["p-nomethod"]},
+   {l:"環境認識ができない",t:["p-nocontext"]},{l:"資金管理・ロットが適当",t:["p-money"]},
+   {l:"メンタル・我慢できずエントリー",t:["p-mental"]},{l:"検証・振り返りをしていない",t:["p-noreview"]},
+   {l:"ファンダ（指標・金利）が分からない",t:["p-funda"]},
+ ]},
+ {key:"goal",q:"当面の目標は？",type:"single",opts:[
+   {l:"まず負けを減らしたい",t:["g-reduce"]},{l:"コツコツ増やしたい",t:["g-steady"]},
+   {l:"大きく伸ばしたい",t:["g-big"]},{l:"知識を体系化したい",t:["g-system"]},
+ ]},
+];
+
+// when: このタグがあれば表示。problem系を先に並べる。
+const MODULES=[
+ {w:"p-losscut",h:"損切りができない、への処方箋",b:"損切りは“我慢比べ”ではなく、エントリー前にOCO・逆指値で出口を置いて自動化する問題です。損切り幅から逆算してロットを決めれば、1回の損失を資金の1〜2%に固定できます。",L:["b3"],T:["lot","rr"]},
+ {w:"p-nomethod",h:"手法が定まらない、への処方箋",b:"聖杯探しをやめ、1つの手法を最低100トレード検証して期待値を数字で持つこと。コロコロ変えるほど、何が機能しているかは永遠に分かりません。",L:["i7"],T:["jr"]},
+ {w:"p-nocontext",h:"環境認識ができない、への処方箋",b:"上位足から順に見るマルチタイムフレームと、ダウ理論でトレンドの向きを定義することから。「今はトレンドかレンジか」を言語化できると、エントリーの質が一段上がります。",L:["b1","i1","i2"],T:[]},
+ {w:"p-money",h:"資金管理が適当、への処方箋",b:"毎回バラバラのロットをやめ、1トレードのリスクを資金の1〜2%に固定します。手法以前に、ここで多くの人が退場しています。",L:["b2"],T:["lot"]},
+ {w:"p-mental",h:"メンタル・我慢できない、への処方箋",b:"感情で勝とうとせず、ルールとチェックリストで“判断の前に出口を決める”。記録をつけて自分のトレードを客観視すると、衝動エントリーは構造的に減ります。",L:["b4","b3"],T:["jr"]},
+ {w:"p-noreview",h:"振り返りをしていない、への処方箋",b:"トレード記録をつけ、勝率・RR・プロフィットファクターを見る習慣を。自分の負けパターン（損切りが遅い・利確が早い）は、データにしないと見えません。",L:["b6","i7"],T:["jr"]},
+ {w:"p-funda",h:"ファンダが分からない、への処方箋",b:"まず金利と雇用の関係から。指標発表は“予想との差”で動くので、立ち回りの型を持っておくと振り回されません。",L:["a1","a3"],T:["ind","scn"]},
+ {w:"beginner",h:"まずは土台を、順番に",b:"初級は順番が大事です。環境認識 → 資金管理 → 損切り の順で土台を固めると、その後の伸びが変わります。",L:["b1","b2","b3"],T:[]},
+ {w:"advanced",h:"上級者の伸びしろ",b:"手法があるなら、次は記録から自分の癖を発見し、イベント前のシナリオを事前に用意する段階。再現性を数字で詰めましょう。",L:["a7"],T:["jr","scn"]},
+ {w:"parttime",h:"兼業の時間術",b:"日中張り付けないなら、デイ〜スイングに寄せ、予約注文（IFD/OCO）とアラートで運用するのが現実的。無理に日中触らないことが守りになります。",L:[],T:["sess"]},
+ {w:"cap-small",h:"少額資金の守り方",b:"少額ほどハイレバで一発退場が起きやすいです。1〜2%ルールを厳守し、複利でゆっくり育てる前提に切り替えましょう。",L:[],T:["lot","comp"]},
+ {w:"gold",h:"ゴールド（XAU/USD）の特性",b:"ボラティリティが大きく、pipsよりドル値幅で考えるのが基本。実質金利との逆相関を押さえると、見通しが立てやすくなります。",L:["a5","b5"],T:[]},
+ {w:"usdjpy",h:"USD/JPYの特性",b:"仲値・ゴトー日のクセ、日米金利差、介入の警戒帯を意識。東京時間の値動きの特徴を知っておくと立ち回りやすくなります。",L:["b5","a1"],T:["sess"]},
+ {w:"crypto",h:"暗号資産の注意点",b:"株など全体のリスク選好に連動しやすく、ドル指標との連動は弱め。ボラが極端なので、ロットとリスク管理を特に厳しめに。",L:[],T:["lot"]},
+];
+
+const PATHS={beginner:["b1","b2","b3","b4","b5","b6"],intermediate:["i1","i2","i3","i4","i5","i6","i7","i8"],advanced:["a1","a2","a3","a4","a5","a6","a7"]};
+
+let step=0; const answers={};
+function tagsOf(key){return answers[key]||[];}
+function allTags(){return Object.values(answers).flat();}
+
+function renderStep(){
+ const Q=QUESTIONS[step];
+ const sel=tagsOf(Q.key);
+ const opts=Q.opts.map((o,i)=>{
+   const on=o.t.every(t=>sel.includes(t));
+   return `<button class="opt ${on?'sel':''}" data-i="${i}"><span class="mk">${on?'✓':''}</span>${o.l}</button>`;
+ }).join("");
+ const canNext=sel.length>0;
+ const last=step===QUESTIONS.length-1;
+ $("stepper").innerHTML=`
+  <div class="prog"><i style="width:${(step)/QUESTIONS.length*100}%"></i></div>
+  <div class="pnum">質問 ${step+1} / ${QUESTIONS.length}</div>
+  <div class="q">${Q.q}</div>
+  <div class="qhint">${Q.type==='multi'?'当てはまるものを全て選んでください':'1つ選んでください'}</div>
+  <div class="opts">${opts}</div>
+  <div class="nav">
+   <button class="btn-ghost" id="prev" ${step===0?'style="visibility:hidden"':''}>‹ 戻る</button>
+   <button class="btn-gold" id="next" ${canNext?'':'disabled'}>${last?'診断する':'次へ ›'}</button>
+  </div>`;
+ $("stepper").querySelectorAll(".opt").forEach(b=>b.addEventListener("click",()=>{
+   const o=Q.opts[+b.dataset.i];
+   if(Q.type==='single'){ answers[Q.key]=[...o.t]; }
+   else{
+     let cur=tagsOf(Q.key);
+     const on=o.t.every(t=>cur.includes(t));
+     cur = on ? cur.filter(t=>!o.t.includes(t)) : [...cur,...o.t];
+     answers[Q.key]=cur;
+   }
+   renderStep();
+ }));
+ $("prev").addEventListener("click",()=>{step--;renderStep();});
+ $("next").addEventListener("click",()=>{ if(last){finish();}else{step++;renderStep();} });
+}
+
+function finish(){
+ const T=allTags(), has=t=>T.includes(t);
+ const level=has('beginner')?'beginner':has('intermediate')?'intermediate':has('advanced')?'advanced':'beginner';
+ const levelL={beginner:'初心者',intermediate:'中級',advanced:'上級'}[level];
+ const instL=has('usdjpy')?'USD/JPY':has('gold')?'ゴールド':has('crypto')?'暗号資産':'FX';
+ const timeL=has('parttime')?'兼業':has('full-time')?'専業':'日中も少し';
+ const probMap={'p-losscut':'損切り','p-nomethod':'手法の確立','p-nocontext':'環境認識','p-money':'資金管理','p-mental':'メンタル','p-noreview':'検証・振り返り','p-funda':'ファンダ'};
+ const firstProb=(QUESTIONS.find(q=>q.key==='prob').opts.map(o=>o.t[0]).find(t=>has(t)));
+ const probL=firstProb?probMap[firstProb]:null;
+
+ const mods=MODULES.filter(m=>has(m.w));
+ const linkL=id=>`<a href="${LESSONS[id][1]}">${LESSONS[id][0]} ›</a>`;
+ const linkT=id=>`<a href="${TOOLS[id][1]}">${TOOLS[id][0]} ›</a>`;
+ const modHtml=mods.map(m=>{
+   const links=[...m.L.map(linkL),...m.T.map(linkT)].join("");
+   return `<div class="mod"><h3>${m.h}</h3><p>${m.b}</p>${links?`<div class="mlinks">${links}</div>`:''}</div>`;
+ }).join("");
+
+ const path=PATHS[level].map(id=>`<a href="${LESSONS[id][1]}">${LESSONS[id][0]}</a>`).join("");
+
+ const toolIds=[...new Set(mods.flatMap(m=>m.T))];
+ const toolHtml=toolIds.length?toolIds.map(linkT).join(""):"";
+
+ $("stepper").style.display="none";
+ const r=$("result"); r.style.display="block";
+ r.innerHTML=`
+  <div class="summary">
+    <div class="st">YOUR TYPE</div>
+    <div class="stype">〈${timeL} × ${levelL} × ${instL}〉タイプ</div>
+    <div class="sline">${probL?`最優先で取り組むべき課題は「${probL}」です。`:''}下のプランで、土台から順に整えていきましょう。</div>
+  </div>
+
+  <div class="rsec">
+    <h2>あなたへの処方箋</h2>
+    <div class="rh">選んだ悩み・状況から、いま効く打ち手を並べました。</div>
+    ${modHtml}
+  </div>
+
+  <div class="rsec">
+    <h2>おすすめの学習パス</h2>
+    <div class="rh">${levelL}は、この順番で進めるのが近道です。${LESSONS.b1?'（教材は順次公開）':''}</div>
+    <div class="path">${path}</div>
+  </div>
+
+  ${toolHtml?`<div class="rsec"><h2>使うとよいツール</h2><div class="rh">今日から判断を助けてくれる道具です。</div><div class="chips">${toolHtml}</div></div>`:''}
+
+  <div class="rsec">
+    <h2>つまずいたら相談を</h2>
+    <div class="rh">診断で拾いきれない個別の疑問は、LINEで直接お答えします。</div>
+    <a class="cta-line" href="${LINE_URL}" target="_blank" rel="noopener">LINEで相談する</a>
+  </div>
+
+  <button class="btn-ghost restart" id="restart">もう一度診断する</button>`;
+ $("restart").addEventListener("click",()=>{ for(const k in answers)delete answers[k]; step=0; r.style.display="none"; $("stepper").style.display="block"; renderStep(); window.scrollTo(0,0); });
+ window.scrollTo(0,0);
+}
+
+renderStep();
+</script>
+</body>
+</html>

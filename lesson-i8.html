@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>チャートパターン｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / チャートパターン</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">中級 08</div>
+  <h1>チャートパターン</h1>
+  <p class="lead">この単元を読むと、よく出る代表的なチャートパターンの意味と使い方がわかります。パターンは『当てもの』ではなく、背後の心理を読む地図として使います。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>パターンは丸暗記ではなく、<b>背後の売買心理</b>とセットで理解する。</li><li>大きく『<b>継続</b>（トレンドが続く）』と『<b>転換</b>（トレンドが終わる）』に分かれる。</li><li>パターンは<b>環境認識の中で</b>使う。単体のサインとして飛びつかない。</li><li>完成・ブレイクを<b>確認してから</b>動く。先回りはダマシに弱い。</li></ul></div>
+
+  <section class="lesson">
+    <h2>パターンは心理の地図</h2>
+<p>チャートパターンとは、相場で繰り返し現れる値動きの『形』です。なぜ繰り返すかというと、その形の裏で、多くの参加者が似たような心理（迷い・あきらめ・期待）になり、似た売買をするからです。だからパターンは、形を覚える暗記ではなく、<b>背後の心理を読む地図</b>として使うのが正解です。</p><p>形だけで『この形が出たから買い』と飛びつくと、ダマシに引っかかります。『なぜこの形ができるのか』を理解していれば、効く場面と効かない場面の区別がつくようになります。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>継続と転換に分けて覚える</h2>
+<p>無数にあるパターンも、役割で分ければ2グループです。まずこの分類で頭を整理します。</p><table class="t"><tr><th>種類</th><th>代表例</th><th>意味</th></tr><tr><td>継続</td><td>フラッグ／三角持ち合い</td><td>一旦の休止のあと、元の方向へ再び動きやすい</td></tr><tr><td>転換</td><td>ダブルトップ／ダブルボトム、ヘッドアンドショルダー</td><td>トレンドの勢いが尽き、反対方向へ向かいやすい</td></tr></table><p>たとえばダブルトップは、高値を2回つけて超えられず『もう上がらない』と参加者があきらめる形。だから下落につながりやすい——というように、形と心理をセットで覚えます。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>環境認識の中で使う</h2>
+<p>パターンは単体で使うのではなく、必ず<b>環境認識・水平線とセット</b>で使います。同じダブルボトムでも、上位足が上昇トレンドで、重要な水平線の上で出るなら信頼度が高い。逆に、強い下降トレンドの途中で出る逆張りパターンは、ダマシになりやすいです。</p><div class="ex"><b>使い方の流れ</b><br>①環境認識で方向を確認 → ②意識される水平線を把握 → ③その近くでパターンが完成 → ④ブレイクを確認して入る<br><br>パターンの『完成・ブレイク』を待つのが重要。形が出ている途中で先回りすると、未完成のまま崩れて損をします。</div><p>パターンはあくまで確率を高める補助です。完璧な予言ではないので、外れた時の損切りも必ずセットにします。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>だましブレイクへの備え</h2>
+<p>パターンやラインのブレイク（抜け）には、<b>だまし</b>がつきものです。抜けたと見せかけてすぐ戻る動きで、飛び乗った人を損切りに誘い込みます。だましが起きるのは、その水準に多くの損切り注文が溜まっており、それを狩る動きが出やすいからです。</p><p>備えとして有効なのは、ブレイクの<b>確定を待つ</b>こと（終値で抜けたか、抜けたあと戻ってこないか）と、抜けた水準まで一度<b>戻ってきたところ（リテスト）</b>を狙うことです。初動に飛び乗らず、ワンテンポ待つだけでだましの多くを避けられます。確実さと引き換えに少し利幅は減りますが、トータルでは安定します。</p>
+    <p>同じパターンでも、出る場所によって信頼度はまるで違います。重要な水平線や上位足のトレンドと噛み合った場所で出たパターンを優先し、根拠の薄い場所で出た形には飛びつかない。この取捨選択が精度を分けます。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>パターンを形だけでなく、背後の心理とセットで理解する。</li><li>継続か転換か、役割で分類して覚える。</li><li>環境認識・水平線と組み合わせて信頼度を判断する。</li><li>完成・ブレイクを確認してから入る（先回りしない）。</li><li>外れた時の損切りを必ずセットで決める。</li></ul></div>
+
+  <div class="related">
+    <a href="lesson-a1.html">次の単元：金利と雇用の読み方 ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>トレード記録｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+.mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:760px;margin:0 auto;padding:0 22px}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+.bar{display:flex;align-items:center;height:58px;gap:14px}
+.back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+.back:hover{color:var(--gold-deep)}
+.bar .sep{color:var(--faint)}.bar .here{font-size:13px;color:var(--muted)}
+main{padding:38px 0 60px}
+.kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+.sub{font-size:13.5px;color:var(--muted);margin-bottom:30px;max-width:42em}
+.panel{background:var(--card);border:.5px solid var(--line);border-radius:14px;padding:24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.grid{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column}.field.full{grid-column:1/-1}
+label{font-size:12px;color:var(--muted);margin-bottom:6px}
+select,input{width:100%;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+select:focus,input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+.result{margin-top:22px;border-top:.5px solid var(--line);padding-top:22px}
+.rows{display:grid;gap:0}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:.5px solid var(--line);font-size:13.5px}
+.row:last-child{border-bottom:none}.row .k{color:var(--muted)}.row .v{font-weight:500;text-align:right}
+.big{display:flex;align-items:baseline;gap:8px;margin:4px 0}
+.big .num{font-family:'Roboto Mono',monospace;font-weight:500;font-size:30px;color:var(--navy)}
+.big .u{font-size:13px;color:var(--muted)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:12px;margin-top:8px}
+.metric{background:var(--paper);border-radius:10px;padding:12px 14px}
+.metric .ml{font-size:11px;color:var(--muted);margin-bottom:3px}
+.metric .mv{font-family:'Roboto Mono',monospace;font-weight:500;font-size:18px;color:var(--ink)}
+.vbadge{font-family:'Roboto Mono',monospace;font-weight:500;font-size:14px;letter-spacing:.06em;padding:7px 16px;border-radius:9px;display:inline-block}
+.v-go{background:rgba(59,125,90,.12);color:var(--ok)}.v-wait{background:rgba(201,161,74,.16);color:var(--gold-deep)}.v-bad{background:rgba(163,64,58,.1);color:var(--bad)}
+.btn-gold{background:var(--gold);color:#2a2008;font-weight:500;font-size:14px;padding:11px 20px;border:none;border-radius:8px}
+.btn-gold:hover{background:#d8b35f}
+.btn-ghost{background:none;border:.5px solid var(--line-strong);color:var(--muted);font-size:12px;padding:8px 13px;border-radius:7px}
+.btn-ghost:hover{color:var(--ink)}
+.note{font-size:12px;color:var(--faint);line-height:1.8;margin-top:18px}
+footer{border-top:.5px solid var(--line);margin-top:30px;padding-top:18px}
+.disc{font-size:11px;color:var(--faint);line-height:1.8}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.add-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;align-items:end}
+.jhead{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:26px 0 12px}
+.jhead h2{font-size:16px;color:var(--navy);font-weight:700}
+.jt{width:100%;border-collapse:collapse;font-size:13px}
+.jt th{font-size:11px;color:var(--muted);text-align:left;font-weight:400;padding:8px 8px;border-bottom:.5px solid var(--line)}
+.jt td{padding:9px 8px;border-bottom:.5px solid var(--line)}
+.jt td.pl-plus{color:var(--ok);font-family:'Roboto Mono',monospace}
+.jt td.pl-minus{color:var(--bad);font-family:'Roboto Mono',monospace}
+.del{background:none;border:none;color:var(--faint);cursor:pointer;font-size:14px}
+.del:hover{color:var(--bad)}
+.empty{font-size:13px;color:var(--faint);border:.5px dashed var(--line-strong);border-radius:12px;padding:22px;text-align:center}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">トレード記録</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">TOOL — JOURNAL</div>
+  <h1>トレード記録</h1>
+  <p class="sub">トレードを記録すると、勝率・累計損益・プロフィットファクター・平均RRを自動集計します。データはこの端末に保存され、CSV書き出しもできます。</p>
+
+  <div class="panel">
+    <div class="add-row">
+      <div class="field"><label for="d">日付</label><input id="d" type="date"></div>
+      <div class="field"><label for="pair">銘柄</label><input id="pair" type="text" placeholder="USD/JPY"></div>
+      <div class="field"><label for="side">方向</label><select id="side"><option>買い</option><option>売り</option></select></div>
+      <div class="field"><label for="pl">損益（円）</label><input id="pl" type="number" step="100" placeholder="-3000" inputmode="numeric"></div>
+      <div class="field"><label for="rr">RR（任意）</label><input id="rr" type="number" step="0.1" placeholder="2.0" inputmode="decimal"></div>
+      <div class="field"><label>&nbsp;</label><button class="btn-gold" id="add">記録する</button></div>
+    </div>
+    <div class="field" style="margin-top:10px"><label for="memo">メモ（任意）</label><input id="memo" type="text" placeholder="根拠・反省など"></div>
+  </div>
+
+  <div id="stats"></div>
+
+  <div class="jhead"><h2>記録一覧</h2><button class="btn-ghost" id="csv">CSVで書き出し</button></div>
+  <div id="list"></div>
+
+  <footer><p class="disc">※本ツールは投資教育を目的とした目安であり、特定の売買を推奨・助言するものではありません。最終判断はご自身の責任で行ってください。</p></footer>
+</main>
+<script>
+const yen=n=>Math.round(n).toLocaleString('ja-JP');const num=(n,d=0)=>Number(n).toLocaleString('ja-JP',{minimumFractionDigits:d,maximumFractionDigits:d});const $=id=>document.getElementById(id);
+let J = [];
+try{ J = JSON.parse(localStorage.getItem('shu_journal')||'[]'); }catch(e){ J=[]; }
+function save(){ try{ localStorage.setItem('shu_journal', JSON.stringify(J)); }catch(e){} }
+$("d").value = new Date().toISOString().slice(0,10);
+$("add").addEventListener("click",()=>{
+ const pl=parseFloat($("pl").value);
+ if(isNaN(pl)){ $("pl").focus(); return; }
+ J.unshift({d:$("d").value, pair:$("pair").value||"-", side:$("side").value, pl, rr:parseFloat($("rr").value)||null, memo:$("memo").value||""});
+ save(); $("pl").value="";$("rr").value="";$("memo").value=""; render();
+});
+function del(i){ J.splice(i,1); save(); render(); }
+function render(){
+ const n=J.length;
+ const wins=J.filter(t=>t.pl>0), losses=J.filter(t=>t.pl<0);
+ const sum=J.reduce((a,t)=>a+t.pl,0);
+ const gp=wins.reduce((a,t)=>a+t.pl,0), gl=Math.abs(losses.reduce((a,t)=>a+t.pl,0));
+ const wr=n?wins.length/n*100:0;
+ const pf=gl>0?gp/gl:(gp>0?Infinity:0);
+ const aw=wins.length?gp/wins.length:0, al=losses.length?gl/losses.length:0;
+ const rrs=J.filter(t=>t.rr!=null).map(t=>t.rr);
+ const arr=rrs.length?rrs.reduce((a,b)=>a+b,0)/rrs.length:null;
+ $("stats").innerHTML = n? `
+  <div class="metrics" style="margin-top:6px">
+   <div class="metric"><div class="ml">トレード数</div><div class="mv">${n}</div></div>
+   <div class="metric"><div class="ml">勝率</div><div class="mv">${num(wr,1)}％</div></div>
+   <div class="metric"><div class="ml">累計損益</div><div class="mv" style="color:${sum>=0?'var(--ok)':'var(--bad)'}">${yen(sum)}</div></div>
+   <div class="metric"><div class="ml">PF</div><div class="mv">${pf===Infinity?'∞':num(pf,2)}</div></div>
+   <div class="metric"><div class="ml">平均利益</div><div class="mv">${yen(aw)}</div></div>
+   <div class="metric"><div class="ml">平均損失</div><div class="mv">${yen(al)}</div></div>
+   ${arr!=null?`<div class="metric"><div class="ml">平均RR</div><div class="mv">${num(arr,2)}</div></div>`:''}
+  </div>`:'';
+ if(!n){ $("list").innerHTML='<div class="empty">まだ記録がありません。上のフォームから最初のトレードを記録しましょう。データはこの端末に保存されます。</div>'; return; }
+ $("list").innerHTML = `<table class="jt"><thead><tr><th>日付</th><th>銘柄</th><th>方向</th><th>損益</th><th>RR</th><th>メモ</th><th></th></tr></thead><tbody>`+
+  J.map((t,i)=>`<tr><td class="mono">${t.d}</td><td>${t.pair}</td><td>${t.side}</td>
+   <td class="${t.pl>=0?'pl-plus':'pl-minus'}">${t.pl>=0?'+':''}${yen(t.pl)}</td>
+   <td class="mono">${t.rr!=null?num(t.rr,1):'-'}</td><td style="color:var(--muted)">${t.memo||''}</td>
+   <td><button class="del" onclick="del(${i})" aria-label="削除">✕</button></td></tr>`).join('')+`</tbody></table>`;
+}
+$("csv").addEventListener("click",()=>{
+ if(!J.length) return;
+ const head="日付,銘柄,方向,損益,RR,メモ\n";
+ const rows=J.map(t=>[t.d,t.pair,t.side,t.pl,t.rr??'',('"'+(t.memo||'').replace(/"/g,'""')+'"')].join(',')).join("\n");
+ const blob=new Blob([head+rows],{type:'text/csv;charset=utf-8;'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='trade-journal.csv';a.click();
+});
+render();
+
+</script>
+</body>
+</html>

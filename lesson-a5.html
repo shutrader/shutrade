@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>実質金利とゴールド｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / 実質金利とゴールド</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">上級 05</div>
+  <h1>実質金利とゴールド</h1>
+  <p class="lead">この単元を読むと、ゴールド（XAU/USD）を動かす最重要の背景である「実質金利」がわかります。ゴールドを触るなら、ここの理解は欠かせません。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>ゴールドの大きな方向は<b>実質金利</b>と逆に動きやすい。実質金利↑＝ゴールド↓が基本。</li><li>実質金利 ≒ <b>名目金利 − 期待インフレ率</b>。利息を生まない金の魅力を測る物差し。</li><li>ゴールドは<b>リスク回避(有事)</b>や<b>ドルの動き</b>にも反応する。一つの要因で決めつけない。</li><li>テクニカルの売買判断に、この<b>背景の追い風／向かい風</b>を重ねて見る。</li></ul></div>
+
+  <section class="lesson">
+    <h2>ゴールドと実質金利の関係</h2>
+<p>ゴールド（金）は、株式や債券と違って<b>利息も配当も生みません</b>。そのため、金利が高い局面では『利息の付く資産（債券など）の方が有利』となり、金の相対的な魅力が下がります。逆に金利が低い・下がる局面では、金の魅力が相対的に高まります。</p><p>ここで重要なのが、単なる金利ではなく<b>実質金利</b>です。ゴールドの大きな方向は、実質金利と<b>逆方向</b>に動きやすい、というのが基本の関係です。実質金利が上がればゴールドは下押し、下がればゴールドは支えられやすくなります。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>実質金利とは何か</h2>
+<p>実質金利は、ざっくり<b>名目金利からインフレの影響を差し引いたもの</b>です。式で表すとこうなります。</p><div class="ex"><b>実質金利 ≒ 名目金利 − 期待インフレ率</b><br><br>例1：名目金利4% − 期待インフレ2% → 実質金利＝+2%（金には向かい風）<br>例2：名目金利4% − 期待インフレ5% → 実質金利＝−1%（金には追い風）<br><br>同じ名目金利でも、インフレ次第で実質金利＝ゴールドへの影響は逆になります。</div><p>つまり『金利が上がった＝必ずゴールド安』ではありません。インフレがそれ以上に進んでいれば実質金利は下がり、ゴールドはむしろ支えられることもあります。下のミニツールで関係を確かめてみてください。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>実質金利だけで決めない</h2>
+<p>実質金利はゴールドの最重要の背景ですが、唯一の要因ではありません。ゴールドは次のような材料にも強く反応します。一つの理屈で決めつけないことが大切です。</p><ul><li><b>リスク回避（有事の金）</b>：戦争・金融不安などで、安全資産として買われる。</li><li><b>米ドルの動き</b>：ゴールドはドル建てのため、ドル高はゴールドの重し、ドル安は追い風になりやすい。</li><li><b>中央銀行の購入</b>：各国中銀の金購入など、需給そのものの変化。</li></ul><p>実戦では、実質金利・ドル・リスクムードという<b>背景の追い風／向かい風</b>を把握したうえで、最終的なエントリーは環境認識とリスク管理（テクニカル）で判断します。背景とテクニカルが同じ方向を向くときが、最も根拠の厚い場面です。</p>
+  </section>
+
+  <div class="interactive">
+    <div class="ttl">MINI TOOL — 実質金利をだす</div>
+    <div class="calc-row"><label for="nom">名目金利（%）</label><input id="nom" type="number" step="0.1" value="4.0"></div>
+    <div class="calc-row"><label for="inf">期待インフレ率（%）</label><input id="inf" type="number" step="0.1" value="2.5"></div>
+    <div class="calc-out"><span class="lbl">実質金利 ≒</span><span class="val mono" id="real">+1.5%</span><span class="lbl" id="bias">ゴールドに向かい風</span></div>
+    <p class="calc-note">あくまで関係を体感するための簡易計算です。実際の相場は他の要因（ドル・リスク回避・需給）にも左右されます。</p>
+  </div>
+  <section class="lesson">
+    <h2>名目金利・期待インフレの確認のしかた</h2>
+<p>実質金利を実感として追うには、二つの要素を分けて見る習慣が役立ちます。ひとつは<b>名目金利</b>で、米国であれば長期金利（10年国債利回りなど）が代表的な目安です。もうひとつは<b>期待インフレ率</b>で、市場が見込む将来の物価上昇の度合いを表します。</p><p>名目金利が上がっても、それ以上に期待インフレが上がっていれば実質金利は下がり、ゴールドには追い風になり得ます。逆に、インフレが落ち着く中で名目金利が高止まりすれば実質金利は上昇し、ゴールドには重しになります。<b>『金利が上がった＝金は下がる』と短絡しない</b>——この一段深い見方が、ゴールドを扱ううえで武器になります。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>ゴールドを触る前に、実質金利の方向（上昇／低下）を確認する。</li><li>名目金利だけでなく、インフレ動向もセットで見る。</li><li>ドルの強弱・リスクムードも合わせて背景を把握する。</li><li>背景（追い風／向かい風）とテクニカルが一致する場面を狙う。</li><li>一つの要因だけでゴールドの方向を決めつけない。</li></ul></div>
+
+  <div class="related">
+    <a href="lesson-a6.html">次の単元：インターマーケット分析 ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+<script>
+(function(){
+  var nom=document.getElementById('nom'),inf=document.getElementById('inf'),real=document.getElementById('real'),bias=document.getElementById('bias');
+  function render(){
+    var n=parseFloat(nom.value), i=parseFloat(inf.value);
+    if(isNaN(n)||isNaN(i)){real.textContent='—';bias.textContent='';return;}
+    var r=n-i;
+    real.textContent=(r>=0?'+':'')+r.toFixed(1)+'%';
+    if(r>0){real.style.color='var(--bad)';bias.textContent='ゴールドに向かい風';bias.style.color='var(--bad)';}
+    else if(r<0){real.style.color='var(--ok)';bias.textContent='ゴールドに追い風';bias.style.color='var(--ok)';}
+    else{real.style.color='var(--muted)';bias.textContent='中立';bias.style.color='var(--muted)';}
+  }
+  nom.addEventListener('input',render); inf.addEventListener('input',render); render();
+})();
+</script>
+</body>
+</html>

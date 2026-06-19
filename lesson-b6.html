@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>トレード記録の付け方｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / トレード記録の付け方</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">初級 06</div>
+  <h1>トレード記録の付け方</h1>
+  <p class="lead">この単元を読むと、トレード記録を「ただの履歴」ではなく、自分の弱点を見つけて上達するための道具に変えられます。記録なしの上達はほぼありません。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>記録の目的は反省ではなく、<b>自分のクセ（負けパターン）を見つける</b>こと。</li><li>勝ち負けの金額より、<b>ルールを守れたか</b>を記録するのが上達の近道。</li><li>毎回同じ項目で記録すると、後から<b>傾向</b>が比較できる。</li><li>週に一度まとめて見返し、次の1週間の改善点を1つだけ決める。</li></ul></div>
+
+  <section class="lesson">
+    <h2>なぜ記録が上達を決めるのか</h2>
+<p>トレードは、1回ごとの勝ち負けには運の要素が大きく混じります。良いトレードでも負けることはあるし、悪いトレードでもたまたま勝つことがあります。だからこそ、1回の結果に一喜一憂しても上達しません。</p><p>上達するには、何十回ぶんの記録を集めて『自分はどういう場面で崩れやすいか』という傾向を見つける必要があります。記録は、感覚では見えない自分のクセを映す鏡です。アスリートが試合映像を見返して動きを修正するのと同じことを、トレードでも行います。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>結果より「プロセス」を記録する</h2>
+<p>多くの人は損益だけを記録しますが、それでは『勝った・負けた』しか残らず、改善につながりません。本当に記録すべきは、<b>ルールを守れたかどうか</b>です。</p><ul><li>環境認識（上位足の方向）をちゃんと確認したか</li><li>損切りを根拠のある場所に置けたか</li><li>ロットは1〜2%ルール内だったか</li><li>感情（リベンジ・過信）で入っていないか</li></ul><p>ルールを守って負けたなら、それは『良い負け』で問題ありません。逆にルールを破って勝った時こそ要注意で、いつか大きく崩れる予兆です。損益ではなく、行動の質を採点しましょう。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>続けられる記録のフォーマット</h2>
+<p>記録は、続けられる形でないと意味がありません。最初から細かくしすぎず、毎回同じ項目を埋めるだけにします。</p><table class="t"><tr><th>項目</th><th>記録する内容</th></tr><tr><td>日付・銘柄</td><td>いつ、何を取引したか</td></tr><tr><td>方向・根拠</td><td>買い/売り、入った理由（環境認識）</td></tr><tr><td>損切り・ロット</td><td>どこに損切りを置き、ロットはルール内だったか</td></tr><tr><td>結果</td><td>pips・損益、そしてルールを守れたか（○×）</td></tr><tr><td>気づき</td><td>次に直すこと（一言でよい）</td></tr></table><p>この記録は、付属の<b>トレード記録ツール</b>を使うと手早く残せます。週末にまとめて見返し、来週の改善点を1つだけ決める。これを繰り返すのが、地味ですが最短の上達ルートです。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>完璧より継続</h2>
+<p>記録で一番ありがちな失敗は、最初から項目を増やしすぎて<b>続かなくなる</b>ことです。詳細な記録を3日でやめてしまうより、ざっくりでも毎回つけ続けるほうが、はるかに価値があります。傾向は『量』が集まって初めて見えるからです。</p><p>まずは『日付・銘柄・根拠・結果・気づき一言』だけでも構いません。続けるうちに『もっと残したい項目』が自然と見えてきたら、その時に足せば十分です。記録は完璧さより<b>継続</b>。続けられる軽さで始めるのが、結局いちばん早く上達します。</p>
+    <p>振り返りは、できれば毎日の取引後に一言、そして週末にまとめて、の二段構えが理想です。熱が残るその日のうちに気づきを残し、週末に冷静な目で全体の傾向を見る。この組み合わせが、感情と分析の両面から上達を支えます。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>毎回同じ項目（日付・銘柄・根拠・損切り・結果・気づき）で記録する。</li><li>損益だけでなく「ルールを守れたか」を○×で残す。</li><li>ルールを破って勝ったトレードを危険信号として記録する。</li><li>週に一度、記録を見返す時間をとる。</li><li>見返したら、次の1週間で直すことを1つだけ決める。</li></ul></div>
+
+  <div class="related">
+    <a href="trade-journal.html">関連ツール：トレード記録 ›</a>
+    <a href="lesson-i1.html">次の単元：ダウ理論と環境認識 ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

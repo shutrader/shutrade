@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NFPでの立ち回り｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / NFPでの立ち回り</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">上級 03</div>
+  <h1>NFPでの立ち回り</h1>
+  <p class="lead">この単元を読むと、毎月の米雇用統計（NFP）という大イベントでの考え方と、危険を避ける立ち回りがわかります。動く日だからこそ、守りの設計が活きます。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>NFP（米雇用統計）は<b>月1回・金曜</b>に出る、雇用関連の最重要指標。</li><li>見るのは数字単体ではなく<b>事前予想との差（サプライズ）</b>。</li><li>発表直後は<b>乱高下・往って来い・スプレッド拡大</b>が起きやすい。</li><li>ポジションは<b>軽く</b>、初動を見送り、落ち着いてから判断する。</li></ul></div>
+
+  <section class="lesson">
+    <h2>NFPとは何か</h2>
+<p>NFP（非農業部門雇用者数＝米雇用統計）は、米国で農業以外の働き手がどれだけ増えたかを示す指標で、毎月1回、原則として金曜に発表されます。前単元の『雇用が金利・通貨の中心』という流れから、NFPは為替・ゴールドを大きく動かす<b>注目度トップクラスのイベント</b>です。</p><p>同時に発表される<b>失業率</b>や<b>平均時給</b>もセットで見られます。特に賃金（平均時給）はインフレに直結するため、近年は数字以上に注目されることがあります。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>数字より『予想との差』</h2>
+<p>NFPで相場が動くのは、発表された数字そのものではなく<b>事前予想とのズレ（サプライズ）</b>です。市場は予想を織り込んで価格を作っているため、予想どおりなら大きく動かず、予想を大きく外した時に急変動します。</p><div class="ex"><b>基本の反応（あくまで目安）</b><br>雇用が予想より強い → 利上げ方向 → ドル高（USD/JPYは上昇／ゴールドは下押し）になりやすい<br>雇用が予想より弱い → 利下げ方向 → ドル安になりやすい<br><br>ただし賃金や失業率と方向が食い違うと、反応は複雑になります。</div><p>付属の『米国指標チェッカー』は、こうした『予想との差』と発表後の値幅から、銘柄ごとの立ち回りの目安を出す補助ツールです。判断の確認に使えます。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>乱高下を避ける立ち回り</h2>
+<p>NFPの発表直後は、瞬時に大きく動いて戻る『往って来い』や、スプレッド（売買の差）の拡大が頻発します。ここで初動に飛び乗ると、ダマシや不利な価格で約定して損をしがちです。だから上級者は<b>守りの設計</b>を徹底します。</p><ul><li><b>ポジションは軽く</b>：イベント前に持ち越すなら、普段よりロットを落とす。</li><li><b>初動は見送る</b>：発表直後の数十秒〜数分は手を出さない。</li><li><b>落ち着いてから</b>：方向が定まり、値動きが落ち着いてから、環境認識に沿って判断する。</li></ul><p>NFPは『当てるゲーム』ではありません。大きく動く日に大怪我をしないことが、月単位の成績を守ります。無理に参加しない日があってもまったく問題ありません。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>発表時刻と『指標前後』の時間管理</h2>
+<p>NFPで身を守るには、<b>発表時刻を正確に把握</b>しておくことが第一歩です。米国の夏時間・冬時間で日本時間の発表時刻がずれるため、『今日は何時か』を毎回確認します。時刻を勘違いして無防備なポジションを持っていると、突然の急変動に巻き込まれます。</p><p>また、発表の<b>直前直後はスプレッドが拡大</b>し、約定もすべりやすくなります。短期売買なら、発表をまたぐ持ち越しは避け、発表直後の数分は様子を見るのが無難です。『参加しない』という選択も立派な戦略で、月に一度の大イベントで無理に勝負しない月があっても、まったく問題ありません。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>NFPの発表日時を事前に把握する（月1回・金曜）。</li><li>数字単体でなく、事前予想との差（サプライズ）で見る。</li><li>賃金・失業率も合わせて方向を確認する。</li><li>イベント前後はロットを軽くする。</li><li>発表直後の初動は見送り、落ち着いてから判断する。</li></ul></div>
+
+  <div class="related">
+    <a href="indicator-checker.html">関連ツール：米国指標チェッカー ›</a>
+    <a href="lesson-a4.html">次の単元：CME FedWatchの使い方 ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

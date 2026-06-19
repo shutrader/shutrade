@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>水平線とトレンドライン｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / 水平線とトレンドライン</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">中級 03</div>
+  <h1>水平線とトレンドライン</h1>
+  <p class="lead">この単元を読むと、意味のある水平線とトレンドラインだけを引けるようになり、エントリー・損切りの基準点が手に入ります。線が引けると相場が構造的に見えます。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>水平線は<b>多くの人が意識する価格</b>に引く。反発・ブレイクの起点になる。</li><li>線は<b>引きすぎない</b>。効いている重要な線だけを数本に絞る。</li><li>トレンドラインは<b>安値同士／高値同士</b>を結び、トレンドの傾きと勢いを見る。</li><li>線は『当たる魔法』ではなく『反応を観察する基準点』として使う。</li></ul></div>
+
+  <section class="lesson">
+    <h2>水平線は「意識される価格」に引く</h2>
+<p>水平線とは、過去に何度も反発したり、止められたりした価格に引く横線です。なぜ効くかというと、多くの市場参加者がその価格を覚えていて、同じ場所で買い・売りの注文を置くからです。線そのものに力があるのではなく、<b>人の意識が集まる</b>から効きます。</p><ul><li><b>過去に何度も反発した高値・安値</b></li><li><b>大きく動き出した起点（前回ブレイクした価格）</b></li><li><b>キリの良い価格</b>（節目として意識されやすい）</li></ul><p>こうした価格は、反発（止まる）かブレイク（抜ける）かの分岐点になり、エントリーや損切りの基準として使えます。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>引きすぎない。効く線だけ残す</h2>
+<p>初心者のチャートは、線だらけになりがちです。線が多いと、どこを見ればいいか分からなくなり、結局どの線も使えません。大切なのは数ではなく<b>質</b>です。</p><p>『何度も反発している』『多くの人が見ているであろう』という、効いている重要な線だけを数本に絞ります。迷ったら、上位足（日足・4時間足）で見える大きな水平線を優先します。上位足の線ほど多くの人が意識し、効きやすいからです。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>トレンドラインで勢いを測る</h2>
+<p>トレンドラインは、上昇中なら<b>安値同士</b>、下降中なら<b>高値同士</b>を結んだ斜めの線です。トレンドの傾き（勢い）と、押し目・戻りの目安を教えてくれます。</p><div class="ex"><b>使い方の例</b><br>上昇トレンドで安値を結んだライン → 価格がそのライン付近まで下げてきたら『押し目買いの候補ゾーン』として観察<br>ラインを明確に下抜け → 上昇の勢いが弱まったサインとして警戒<br><br>ラインは『触れたら必ず反発』ではありません。あくまで反応を観察する基準です。</div><p>水平線とトレンドラインを組み合わせると、相場が『どこで・なぜ』動きやすいかが構造的に見えてきます。これがエントリー設計の土台になります。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>線は『ゾーン』で考える</h2>
+<p>水平線やトレンドラインを引くと、『1円のズレで反発しなかった』と悩むことがあります。ですが価格は、ぴったり同じ1点で反応するわけではありません。多くの人が意識する価格帯には<b>幅</b>があるため、線は1本の細い線ではなく<b>ゾーン（帯）</b>として捉えるのが実戦的です。</p><p>たとえば重要な高値の少し上下を含めた帯を意識し、『このゾーンで反発しそうか、抜けそうか』を観察します。ゾーンで考えると、ヒゲでわずかに超えた程度のダマシに振り回されにくくなり、損切りも『ゾーンの外側』に置けるため、ノイズで切られにくくなります。</p>
+    <p>線を引いたら、過去にその水準で『どんな反応が何回あったか』も確認しておきましょう。反応の回数が多い線ほど多くの人に意識されており、今後も効きやすい重要なゾーンだと判断できます。</p>
+    <p>線は一度引いて終わりではなく、相場が進むたびに引き直す・消すことも大切です。効かなくなった古い線をそのまま残すと判断の邪魔になります。今も意識されている線だけを残す、という手入れを習慣にしてください。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>上位足から、効いている水平線を数本だけ引く。</li><li>線は引きすぎず、迷ったら消す。</li><li>トレンドラインで今の勢いと押し目・戻りの目安を確認する。</li><li>線の近くでの反発／ブレイクの『反応』を観察する。</li><li>線を損切り・利確の基準点として使う。</li></ul></div>
+
+  <div class="related">
+    <a href="lesson-i4.html">次の単元：インジケーターの本当の使い方 ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

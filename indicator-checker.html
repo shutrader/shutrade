@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>米国指標チェッカー｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  .sub{font-size:13.5px;color:var(--muted);margin-bottom:30px;max-width:42em}
+  .panel{background:var(--card);border:.5px solid var(--line);border-radius:14px;padding:24px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .field{display:flex;flex-direction:column}
+  .field.full{grid-column:1/-1}
+  label{font-size:12px;color:var(--muted);margin-bottom:6px}
+  select,input{width:100%;font-family:inherit;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  select:focus,input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .move-row{display:flex;gap:10px}
+  .move-row input{flex:1}
+  .move-row select{width:128px}
+  .unit{font-family:'Roboto Mono',monospace;font-size:12px;color:var(--faint);margin-top:6px}
+
+  .result{margin-top:22px;border-top:.5px solid var(--line);padding-top:22px}
+  .verdict{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .vbadge{font-family:'Roboto Mono',monospace;font-weight:500;font-size:15px;letter-spacing:.08em;padding:8px 18px;border-radius:9px}
+  .v-go{background:rgba(59,125,90,.12);color:var(--ok)}
+  .v-wait{background:rgba(201,161,74,.16);color:var(--gold-deep)}
+  .v-bad{background:rgba(163,64,58,.1);color:var(--bad)}
+  .vcomment{font-size:13.5px;color:var(--ink);line-height:1.7}
+  .rows{display:grid;gap:0}
+  .row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:.5px solid var(--line);font-size:13.5px}
+  .row:last-child{border-bottom:none}
+  .row .k{color:var(--muted)}
+  .row .v{font-weight:500;text-align:right}
+  .tag{font-family:'Roboto Mono',monospace;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:8px}
+  .t-up{background:rgba(24,42,78,.08);color:var(--navy)}
+  .t-ok{background:rgba(59,125,90,.12);color:var(--ok)}
+  .t-no{background:rgba(163,64,58,.1);color:var(--bad)}
+  .note{font-size:12px;color:var(--faint);line-height:1.8;margin-top:18px}
+  footer{border-top:.5px solid var(--line);margin-top:30px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">米国指標チェッカー</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">TOOL — US INDICATORS</div>
+  <h1>米国指標チェッカー</h1>
+  <p class="sub">指標の結果（予想との差）と、発表後の値幅から、銘柄ごとの立ち回りの目安を出します。指標トレードは往って来い・スプレッド拡大が起きやすいので、あくまで判断の補助としてお使いください。</p>
+
+  <div class="panel">
+    <div class="grid">
+      <div class="field full">
+        <label for="ind">指標</label>
+        <select id="ind"></select>
+      </div>
+      <div class="field">
+        <label for="sur">結果（予想との差）</label>
+        <select id="sur">
+          <option value="1">予想を上回った（強い）</option>
+          <option value="0">ほぼ予想どおり</option>
+          <option value="-1">予想を下回った（弱い）</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="inst">銘柄</label>
+        <select id="inst"></select>
+      </div>
+      <div class="field full">
+        <label for="mag">発表後の値幅と方向</label>
+        <div class="move-row">
+          <input id="mag" type="number" min="0" step="1" placeholder="例: 15" inputmode="decimal">
+          <select id="dir"><option value="1">上昇</option><option value="-1">下落</option></select>
+        </div>
+        <span class="unit" id="unit-hint"></span>
+      </div>
+    </div>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <p class="note" id="extra-note"></p>
+
+  <footer><p class="disc">※本ツールは投資教育を目的とした目安であり、特定の売買を推奨・助言するものではありません。最終判断はご自身の責任で行ってください。</p></footer>
+</main>
+
+<script>
+const CONFIG = {
+  // pol: 上振れ(=強い)が +1:ドル高 / -1:ドル安
+  indicators: [
+    {name:"雇用統計（NFP）", pol:1},
+    {name:"失業率", pol:-1},
+    {name:"平均時給", pol:1},
+    {name:"CPI（消費者物価）", pol:1},
+    {name:"コアCPI", pol:1},
+    {name:"PCE・コアPCE", pol:1},
+    {name:"PPI（生産者物価）", pol:1},
+    {name:"小売売上高", pol:1},
+    {name:"ISM製造業景況指数", pol:1},
+    {name:"ISM非製造業景況指数", pol:1},
+    {name:"ADP雇用", pol:1},
+    {name:"新規失業保険申請件数", pol:-1},
+    {name:"GDP", pol:1},
+    {name:"FOMC政策金利・声明（タカ派=上振れ）", pol:1},
+    {name:"ミシガン大消費者信頼感", pol:1},
+  ],
+  // rel: ドル高のとき +1:上昇 / -1:下落。thr: 値幅しきい値。
+  instruments: [
+    {name:"USD/JPY", rel:1,  thr:10,  unit:"pips", step:1},
+    {name:"XAU/USD（ゴールド）", rel:-1, thr:3, unit:"ドル", step:0.1},
+    {name:"EUR/USD", rel:-1, thr:10, unit:"pips", step:1},
+    {name:"GBP/USD", rel:-1, thr:12, unit:"pips", step:1},
+    {name:"AUD/USD", rel:-1, thr:8,  unit:"pips", step:1},
+    {name:"BTC/USD", rel:-1, thr:150,unit:"ドル", step:10, weak:true},
+  ],
+};
+
+const $=id=>document.getElementById(id);
+CONFIG.indicators.forEach((x,i)=>$("ind").add(new Option(x.name,i)));
+CONFIG.instruments.forEach((x,i)=>$("inst").add(new Option(x.name,i)));
+
+function compute(){
+  const ind=CONFIG.indicators[+$("ind").value];
+  const inst=CONFIG.instruments[+$("inst").value];
+  const sur=+$("sur").value;
+  const mag=parseFloat($("mag").value);
+  const dir=+$("dir").value;
+  $("mag").step=inst.step; $("unit-hint").textContent=`単位: ${inst.unit}（しきい値 ${inst.thr}${inst.unit}）`;
+
+  const usd = sur*ind.pol;               // +ドル高 / -ドル安 / 0
+  const bias = usd*inst.rel;             // +上昇 / -下落 / 0
+  const hasMove = !isNaN(mag) && mag>0;
+  const exceeds = hasMove && mag>=inst.thr;
+  const aligned = hasMove && ((dir>0)===(bias>0)) && bias!==0;
+
+  const usdTxt = usd>0?"ドル高":usd<0?"ドル安":"中立（予想どおり）";
+  const biasTxt = bias>0?"上昇方向":bias<0?"下落方向":"—";
+
+  let v="wait", vlabel="WAIT", comment="";
+  if(sur===0){
+    v="wait"; vlabel="WAIT"; comment="ほぼ予想どおりで、織り込み済み。方向感が出にくいため様子見が無難です。";
+  }else if(!hasMove){
+    v="wait"; vlabel="WAIT"; comment="まだ値幅が出ていません。しきい値を超える初動を確認してから判断しましょう。";
+  }else if(!exceeds){
+    v="wait"; vlabel="WAIT"; comment=`値幅がしきい値（${inst.thr}${inst.unit}）に未達。ダマシ・往って来いに注意し、値幅が出るまで待ちます。`;
+  }else if(aligned){
+    v="go"; vlabel="GO"; comment="サプライズの方向と値動きが一致し、しきい値も超過。順張りで乗る候補です（戻りを待つ・分割など管理は徹底）。";
+  }else{
+    v="bad"; vlabel="見送り"; comment="サプライズの想定と逆行しています。織り込み済み・ダマシの可能性。安易な順張りは見送りが無難です。";
+  }
+
+  const moveTag = !hasMove?"" : exceeds?`<span class="tag t-ok">しきい値超え</span>`:`<span class="tag t-no">未達</span>`;
+  const dirTag = !hasMove||bias===0?"" : aligned?`<span class="tag t-ok">想定と一致</span>`:`<span class="tag t-no">逆行</span>`;
+
+  $("result").innerHTML = `
+    <div class="verdict">
+      <span class="vbadge v-${v==='go'?'go':v==='bad'?'bad':'wait'}">${vlabel}</span>
+      <span class="vcomment">${comment}</span>
+    </div>
+    <div class="rows">
+      <div class="row"><span class="k">ドル方向</span><span class="v">${usdTxt}</span></div>
+      <div class="row"><span class="k">${inst.name} の想定方向</span><span class="v">${biasTxt}</span></div>
+      <div class="row"><span class="k">発表後の値幅</span><span class="v">${hasMove?`${mag}${inst.unit}`:'—'} ${moveTag}</span></div>
+      <div class="row"><span class="k">観測した方向</span><span class="v">${hasMove?(dir>0?'上昇':'下落'):'—'} ${dirTag}</span></div>
+    </div>`;
+
+  $("extra-note").textContent = inst.weak
+    ? "※ BTC/USD はドル指標との連動が弱く、リスク選好（株・暗号資産全体のムード）に左右されます。判定は参考程度に。"
+    : "";
+}
+["ind","sur","inst","mag","dir"].forEach(id=>$(id).addEventListener("input",compute));
+compute();
+</script>
+</body>
+</html>

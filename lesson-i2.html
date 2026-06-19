@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マルチタイムフレーム分析｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / マルチタイムフレーム分析</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">中級 02</div>
+  <h1>マルチタイムフレーム分析</h1>
+  <p class="lead">この単元を読むと、複数の時間足を組み合わせて「方向は上位足、タイミングは下位足」と役割分担する型が身につきます。勝ちやすい場面の見つけ方そのものです。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>時間足は<b>役割分担</b>。上位＝方向、中位＝現在地、下位＝エントリーのタイミング。</li><li>上位足と下位足の<b>方向がそろった時</b>だけ狙う。逆らう時は見送る。</li><li>見る時間足は<b>3つ程度</b>に固定する。増やしすぎると混乱する。</li><li>『上位足の押し目を、下位足で確認して入る』が王道の型。</li></ul></div>
+
+  <section class="lesson">
+    <h2>時間足ごとに役割を与える</h2>
+<p>マルチタイムフレーム分析（MTF）とは、複数の時間足を同時に見て判断する方法です。ポイントは、すべての時間足を平等に見るのではなく、<b>役割を分ける</b>ことです。</p><table class="t"><tr><th>区分</th><th>時間足の例</th><th>役割</th></tr><tr><td>上位足</td><td>日足・4時間足</td><td>大きな方向（目線）を決める</td></tr><tr><td>中位足</td><td>1時間足</td><td>現在地（押し目・戻りのどこか）</td></tr><tr><td>下位足</td><td>15分・5分足</td><td>実際に入るタイミング</td></tr></table><p>上位足で『買い』と決めたら、下位足では買いのタイミングだけを探す。下位足の小さな下げに惑わされて売る、といった逆らう行動をしないための仕組みです。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>方向がそろう瞬間を狙う</h2>
+<p>MTFで一番勝ちやすいのは、<b>上位足と下位足の方向がそろう瞬間</b>です。たとえば上位足が上昇トレンドで押し目をつけ、その押し目で下位足が下げ止まって上向きに転じる。ここは複数の時間軸が同じ方向を示す、根拠の厚い場面です。</p><div class="ex"><b>そろった例（買い）</b><br>日足：上昇トレンド（目線=買い）<br>1時間足：上昇の途中で押し目<br>5分足：押し目で下げ止まり、上昇に転換 → ここでエントリー検討<br><br><b>そろわない例</b><br>日足が上昇でも、1時間足がまだ下げ続けている → タイミング尚早。待つ。</div>
+  </section>
+
+  <section class="lesson">
+    <h2>時間足は増やしすぎない</h2>
+<p>『多くの時間足を見れば見るほど正確になる』と思いがちですが、逆です。時間足が増えるほど、互いに矛盾するサインが出て判断が止まります（分析まひ）。</p><p>見る時間足は<b>3つ程度に固定</b>するのがおすすめです。たとえば『日足・1時間足・5分足』のように、自分の組み合わせを決めて毎回同じ順で見ます。順番も大切で、必ず<b>上位足から下位足へ</b>。下位足から見ると、小さな値動きに引っ張られて全体を見失います。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>時間足の切り替えで迷わないコツ</h2>
+<p>複数の時間足を行き来していると、『下位足が逆に動いていて不安』『どの足を信じればいいか分からない』と迷うことがあります。これを防ぐコツは、<b>各時間足の役割を口に出して確認</b>することです。『日足＝方向、5分足＝タイミング』と役割を固定すれば、下位足の小さな逆行は『方向を覆す材料ではない』と割り切れます。</p><p>もうひとつのコツは、<b>上位足で判断を下し、下位足は実行だけに使う</b>と決めることです。方向の決定権は常に上位足にあり、下位足はその方向に入る瞬間を計るだけ。決定権の所在をはっきりさせると、時間足をまたいでも判断がぶれなくなります。</p>
+    <p>最初は『日足・1時間足・5分足』のように間隔を空けた三つを選ぶと、それぞれの役割が重ならず見やすくなります。近すぎる時間足を並べると情報が似通い、かえって判断がぶれやすくなる点にも注意してください。</p>
+    <p>どの時間足を主役にするかは、自分の取引スタイルでも変わります。数日かけて狙うなら上位足を重め、その日のうちに終えるなら下位足を重視する、というように、生活リズムに合わせて役割の比重を決めておくとよいでしょう。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>自分の時間足セット（例：日足・1時間足・5分足）を決めて固定する。</li><li>必ず上位足→下位足の順に見る。</li><li>上位足の目線に合うエントリーだけを下位足で探す。</li><li>上位足と下位足の方向がそろうまで待つ。</li><li>時間足を増やしすぎず、迷ったら見送る。</li></ul></div>
+
+  <div class="related">
+    <a href="lesson-i3.html">次の単元：水平線とトレンドライン ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>エントリーとイグジットの設計｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / エントリーとイグジットの設計</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">中級 05</div>
+  <h1>エントリーとイグジットの設計</h1>
+  <p class="lead">この単元を読むと、入口（エントリー）と出口（損切り・利確）をワンセットで設計できるようになります。出口まで決めて初めて、1つのトレードが完成します。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>エントリーの前に<b>損切りと利確の両方</b>を決める。出口なき入口は禁止。</li><li>入る条件は<b>具体的に言語化</b>する。『なんとなく』を消す。</li><li>利確は<b>事前のルール</b>で。伸ばす／決める基準を先に持つ。</li><li>1トレード＝入口・損切り・利確の3点セットで1つの設計図。</li></ul></div>
+
+  <section class="lesson">
+    <h2>出口を決めてから入口を決める</h2>
+<p>多くの人はエントリー（入口）ばかり考え、出口を後回しにします。しかし、利益も損失も決まるのは出口です。順番としては、入る前に<b>『どこで間違いを認めるか（損切り）』『どこで利益を取るか（利確）』</b>を先に決め、その上で入口を判断します。</p><p>出口が決まっていないと、含み益が出れば『もっと』と欲が出て利を伸ばしすぎ、含み損が出れば『戻るかも』と損切りが遅れます。出口を先に固定することが、感情を排除する最大のコツです。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>エントリー条件を言語化する</h2>
+<p>『良さそうだから入る』では再現性がありません。エントリー条件は、<b>他人に説明できるレベルで言語化</b>します。前単元までの知識を組み合わせると、こう書けます。</p><ol><li>上位足：環境認識で方向が明確（例：上昇トレンド）</li><li>現在地：意識される水平線・トレンドラインの押し目付近</li><li>下位足：下げ止まりや反発の形が確認できた</li></ol><p>この3つがそろった時だけ入る、と決めれば、エントリーは『判断』から『チェックリストの確認』に変わります。再現できる行動だけが、検証・改善の対象になります（次単元）。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>イグジットを設計する</h2>
+<p>出口は損切りと利確の2つです。損切りは前単元のとおり根拠のある場所に置きます。利確は、事前のルールで決めておきます。代表的な考え方は次の3つです。</p><table class="t"><tr><th>方法</th><th>内容</th><th>向く場面</th></tr><tr><td>目標価格</td><td>次の水平線など、抵抗になりそうな価格で利確</td><td>レンジ・節目が明確</td></tr><tr><td>リスクリワード</td><td>損切り幅の○倍で利確（次単元）</td><td>機械的に運用したい</td></tr><tr><td>トレイリング</td><td>利が伸びたら損切りを建値方向へ動かす</td><td>トレンドに乗せたい</td></tr></table><div class="ex"><b>1トレードの設計図（例）</b><br>入口：上昇トレンドの押し目で反発確認<br>損切り：直近押し安値の下（−20pips）<br>利確：直近高値の手前（+40pips）<br>→ 入る前に3点すべて決まっている状態でエントリー。</div>
+  </section>
+
+  <section class="lesson">
+    <h2>建値（ブレイクイーブン）を活用する</h2>
+<p>エントリー後の出口管理で覚えておきたいのが<b>建値（ブレイクイーブン）</b>への損切り移動です。含み益が一定まで伸びたら、損切りを<b>エントリー価格（建値）まで動かす</b>と、そこから逆行しても損失ゼロで撤退できます。『勝ちトレードを負けに変えない』ための守りです。</p><p>注意点は、建値に動かすのが<b>早すぎない</b>ことです。まだ十分に伸びていないうちに建値へ寄せると、通常の揺れで損切りにかかり、本来取れた利益を逃します。目安として、利益が損切り幅と同じくらい（RR1.0程度）伸びてから動かすなど、自分のルールを決めておきましょう。</p>
+    <p>入口・損切り・利確の三点が決まったら、エントリー前にそれをメモしておくと、取引中に方針がぶれません。決めた出口を相場の最中に動かさないことが、設計図どおりにトレードを完了させるコツです。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>エントリー前に損切りと利確の両方を必ず決める。</li><li>エントリー条件を、他人に説明できる言葉で書き出す。</li><li>条件がそろった時だけ入り、欠けたら見送る。</li><li>利確方法（目標価格・RR・トレイリング）を事前に選ぶ。</li><li>1トレードを入口・損切り・利確の3点セットで記録する。</li></ul></div>
+
+  <div class="related">
+    <a href="lesson-i6.html">次の単元：リスクリワードの考え方 ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

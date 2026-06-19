@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>損切りをルール化する｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / 損切りをルール化する</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">初級 03</div>
+  <h1>損切りをルール化する</h1>
+  <p class="lead">この単元を読むと、損切りを「我慢比べ」ではなく、エントリー前に決める作業に変えられます。損切りができれば、トレードは一気に安定します。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>損切りはエントリーする<b>前</b>に置く場所を決める。入ってから考えるのは手遅れ。</li><li>損切りの位置は「ここを抜けたら自分の読みが間違い」という<b>テクニカルの根拠</b>で決める。</li><li>損切り注文（逆指値）は<b>必ず置く</b>。手動で見張って耐えるのは最も危険。</li><li>損切りは負けではなく、想定どおりのコスト。1回の損失額は前単元の1〜2%ルール内に収める。</li></ul></div>
+
+  <section class="lesson">
+    <h2>損切りは「負け」ではなく「コスト」</h2>
+<p>損切りが苦手な人は、損切り＝負けの確定だと感じてしまいます。ですが、トレードは確率のゲームで、どれだけ上手い人でも外れる回数は必ずあります。外れた時に素早く小さく撤退することこそ、資金を守る正しいプレーです。損切りは負けではなく、ビジネスにおける必要経費と同じ「コスト」だと捉え直してください。</p><p>アスリートも、勝てない試合や不利な局面では無理をせず、次に備えて損失を最小化します。撤退の上手さは弱さではなく、長く戦うための技術です。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>損切りは「根拠のある場所」に置く</h2>
+<p>損切りの位置は、なんとなくの金額（「1万円損したら切る」）ではなく、<b>チャート上の根拠</b>で決めます。基本は「ここを抜けたら、自分が想定したシナリオが崩れる」という場所のすぐ外側です。</p><ul><li><b>買いの場合</b>：直近の安値（押し安値）の少し下</li><li><b>売りの場合</b>：直近の高値（戻り高値）の少し上</li><li>その水準を超えたら「上昇（下降）の前提が壊れた」と言える場所を選ぶ</li></ul><p>根拠のある場所に置くと、損切りに当たった時に「読みが外れた」と納得でき、感情的に引きずりません。逆に根拠のない損切りは、当たるたびに迷いが生まれます。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>逆指値は必ず置く。耐えない</h2>
+<p>損切りは、注文（逆指値）として<b>必ず発注</b>しておきます。「含み損を見ながら手で切る」やり方は、いざ逆行した時に『もう少し待てば戻るかも』という期待が働き、ほぼ間違いなく損切りが遅れます。これが退場の典型パターンです。</p><div class="ex"><b>損切りが膨らむ流れ（避けるべき例）</b><br>想定20pipsの損切りを置かない → 逆行 → 「戻るはず」と保有 → 50pips → 「ここまで来たら戻るまで待つ」 → 100pips → 強制ロスカット<br><br>最初に20pipsで切っていれば、ただの小さなコストで済んでいました。</div><p>エントリーと同時に損切り注文をセットで入れる。これを習慣にするだけで、大負けはほぼなくなります。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>損切りが狭すぎても続かない</h2>
+<p>損切りは置けばよいというものではなく、<b>狭すぎる損切り</b>にも注意が必要です。根拠の場所より手前に置くと、本来の方向に進む前のわずかな揺れ（ノイズ）で何度も損切りにかかり、『損切り貧乏』になります。これは損切りが悪いのではなく、<b>置く場所が浅い</b>のが原因です。</p><p>正しくは、まず『ここを抜けたら間違い』という根拠の場所に損切りを置き、その損切り幅に合わせてロットを小さくして損失額を一定に保ちます。<b>損切り幅を資金に合わせるのではなく、ロットを損切り幅に合わせる</b>。順番を間違えなければ、適切な損切りと許容損失額は両立できます。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>エントリー前に損切りの価格を必ず決めてからポジションを持つ。</li><li>損切りはテクニカルの根拠（直近高値・安値の外側）に置く。</li><li>逆指値注文を必ずセットし、手動で耐えない。</li><li>損切り幅と許容損失額からロットを逆算する（1〜2%ルール）。</li><li>損切りに当たったら、原因を一言メモして次に進む。引きずらない。</li></ul></div>
+
+  <div class="related">
+    <a href="lot-calculator.html">関連ツール：ロット計算 ›</a>
+    <a href="risk-reward.html">関連ツール：リスクリワード ›</a>
+    <a href="lesson-b4.html">次の単元：メンタルと規律 ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

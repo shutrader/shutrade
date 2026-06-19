@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>インターマーケット分析｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / インターマーケット分析</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">上級 06</div>
+  <h1>インターマーケット分析</h1>
+  <p class="lead">この単元を読むと、為替・株・金利・商品・暗号資産といった各市場のつながりを読み、相場全体の『ムード』から個別銘柄を判断する視点が身につきます。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>市場は<b>つながって</b>動く。為替だけ見るより、全体のムードを読むと精度が上がる。</li><li>中心軸は<b>リスクオン（強気）／リスクオフ（弱気）</b>というムードの切り替え。</li><li><b>金利・ドル・株・ゴールド・暗号資産</b>の典型的な連動を覚えておく。</li><li>連動は『よくある傾向』であり<b>絶対ではない</b>。崩れる時もある。</li></ul></div>
+
+  <section class="lesson">
+    <h2>市場はつながって動く</h2>
+<p>インターマーケット分析とは、為替・株式・金利（債券）・商品（ゴールド・原油）・暗号資産といった<b>複数の市場のつながり</b>を見て相場を読む方法です。これらは独立して動いているのではなく、お金が市場間を行き来することで、互いに影響し合っています。</p><p>為替のチャートだけを見ていると気づけない大きな流れも、市場全体を俯瞰すると見えてきます。『なぜ今ドルが買われているのか』を、株や金利の動きから裏付けられるようになるのが狙いです。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>中心は『リスクオン／オフ』</h2>
+<p>インターマーケットを理解する軸が、<b>リスクオン</b>（投資家が強気でリスクを取る）と<b>リスクオフ</b>（弱気で安全資産に逃げる）というムードです。多くの連動は、このムードの切り替えで説明できます。</p><table class="t"><tr><th>資産</th><th>リスクオン(強気)</th><th>リスクオフ(弱気)</th></tr><tr><td>株価</td><td>上がりやすい</td><td>下がりやすい</td></tr><tr><td>暗号資産（BTC等）</td><td>買われやすい</td><td>売られやすい</td></tr><tr><td>安全資産（円・米国債）</td><td>売られやすい</td><td>買われやすい（円高傾向）</td></tr><tr><td>ゴールド</td><td>まちまち（金利次第）</td><td>有事で買われやすい</td></tr></table><p>たとえば株が大きく崩れている日は『リスクオフ』で、安全資産の円が買われ、USD/JPYは下がりやすい——というように、ムードから為替の地合いを推測できます。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>典型的な連動と、その限界</h2>
+<p>覚えておくと役立つ、代表的な連動関係をいくつか挙げます。前単元までの金利・ドル・ゴールドの知識とつながります。</p><ul><li><b>米金利↑ → ドル高</b>：金利の高い通貨にお金が向かう。</li><li><b>ドル高 → ゴールド・新興国通貨に逆風</b>：ドル建て資産が割高になる。</li><li><b>株高・低リスク → 円安（円が売られる）</b>：安全資産の円から、リスク資産へ資金が移る。</li></ul><div class="ex"><b>使い方</b><br>個別銘柄を判断する前に、まず『今日はリスクオンか、オフか』を株や金利でざっくり把握 → その地合いに沿った方向を、自分の銘柄の環境認識で確認する。</div><p>ただし、これらの連動は『よくある傾向』であって、<b>絶対の法則ではありません</b>。金融政策の局面や個別の材料で、連動が崩れることもあります。連動を前提にしすぎず、最終的にはチャート（環境認識）で確認する姿勢を保ってください。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>相関は変化する</h2>
+<p>インターマーケットの連動で最も注意すべきは、<b>相関は固定ではない</b>という点です。『株高＝円安』『金利高＝ドル高』といった関係は、平時には成り立ちやすいものの、局面によっては弱まったり、逆転したりします。特に金融危機やインフレ局面など、市場の前提が変わるときに崩れやすくなります。</p><p>たとえば、ふだんは安全資産として買われるはずの通貨が、その国自身の問題で売られることもあります。連動を『絶対のルール』として機械的に当てはめると、こうした転換点で大きく外します。連動は<b>今も成り立っているかを都度確認</b>しながら使う、柔らかい前提として扱ってください。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>銘柄を見る前に、株・金利からリスクオン／オフを把握する。</li><li>金利・ドル・株・ゴールドの典型的な連動を頭に入れる。</li><li>全体のムードと、自分の銘柄の方向が合うか確認する。</li><li>連動はあくまで傾向で、崩れることがあると意識する。</li><li>最終判断はチャート（環境認識）で確認する。</li></ul></div>
+
+  <div class="related">
+    <a href="lesson-a7.html">次の単元：シナリオプランニング ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

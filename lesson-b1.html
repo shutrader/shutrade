@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>環境認識の基礎｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* lesson */
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"✓";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+
+  /* interactive */
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .seg{display:flex;flex-direction:column;gap:12px}
+  .seg .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .seg label{font-size:12px;color:var(--muted);width:118px;flex-shrink:0}
+  .opts{display:flex;gap:8px;flex-wrap:wrap}
+  .opts button{font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:8px 14px;transition:.12s}
+  .opts button:hover{border-color:var(--line-strong)}
+  .opts button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .env-out{margin-top:16px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:14px}
+  .env-badge{font-family:'Roboto Mono',monospace;font-weight:500;font-size:15px;letter-spacing:.06em;padding:8px 18px;border-radius:9px}
+  .e-buy{background:rgba(59,125,90,.12);color:var(--ok)}
+  .e-sell{background:rgba(163,64,58,.1);color:var(--bad)}
+  .e-wait{background:rgba(201,161,74,.16);color:var(--gold-deep)}
+  .env-cmt{font-size:13.5px;color:var(--ink);line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / 環境認識の基礎</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">初級 01</div>
+  <h1>環境認識の基礎</h1>
+  <p class="lead">この単元を読むと、エントリーボタンを押す前に「今は買い場か、売り場か、それとも休む場面か」を、自分の感覚ではなくルールで判断する型が身につきます。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul>
+    <li>トレードは「入る前の地図づくり（環境認識）」が勝敗の大半を決める。エントリー手法より先に身につける。</li>
+    <li>必ず<b>大きな時間足から小さな時間足へ</b>の順で見る。木を見る前に森を見る。</li>
+    <li>相場は「上昇トレンド・下降トレンド・レンジ（横ばい）」の3状態。<b>どれか分からない時は休む</b>のが正解。</li>
+    <li>上位足の方向に逆らわない。これだけで初心者の負けの多くは減る。</li>
+  </ul></div>
+
+  <section class="lesson">
+    <h2>環境認識とは「地図を持つこと」</h2>
+    <p>環境認識とは、チャートを開いてすぐに注文を出すのではなく、「今この相場はどんな状態にあるのか」をまず把握する作業のことです。山登りでいきなり歩き出さず、地図で現在地と目的地を確認するのと同じです。地図を持たずに歩けば、たまたま正しい方向に進めることもありますが、続けていれば必ず道に迷います。</p>
+    <p>多くの初心者は「どこで買うか・売るか」というエントリー手法ばかりを探します。ですが、同じ手法でも、相場が上昇トレンドの時に使うか、横ばいの時に使うかで結果はまるで変わります。手法が悪いのではなく、<b>使う場面を間違えている</b>だけ、というケースがとても多いのです。だからこそ、手法より先に環境認識を身につけます。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>大きな時間足から、小さな時間足へ</h2>
+    <p>環境認識の鉄則は、<b>必ず大きな時間足から見る</b>ことです。順番を逆にすると、小さな値動きに振り回されて全体の方向を見失います。木を一本ずつ見る前に、まず森全体の形を確認する。これが順番です。</p>
+    <p>目安として、次のような流れで上から下へ見ていきます。時間足の数字そのものより、「長期で方向を決め、短期でタイミングを計る」という役割分担を覚えてください。</p>
+    <table class="t">
+      <tr><th>時間足</th><th>役割</th><th>見るもの</th></tr>
+      <tr><td>日足・4時間足</td><td>大きな方向（森）</td><td>今は上昇か下降か横ばいか</td></tr>
+      <tr><td>1時間足</td><td>現在地の確認</td><td>押し目・戻りのどのあたりか</td></tr>
+      <tr><td>15分・5分足</td><td>入るタイミング（木）</td><td>実際のエントリー位置</td></tr>
+    </table>
+    <p>上位足が上向きなら「買い目線」、下向きなら「売り目線」と決め、その目線に合うエントリーだけを下位足で探します。上位足が上なのに下位足で売りを狙う、といった逆らう取引を減らすだけで、勝率は大きく安定します。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>相場は3つの状態しかない</h2>
+    <p>どんな相場も、突き詰めれば次の3つのどれかです。難しく考えず、まずこの仕分けができるようになることを目指します。</p>
+    <ul>
+      <li><b>上昇トレンド</b>：高値も安値も切り上がっている。基本は「買い」を探す場面。</li>
+      <li><b>下降トレンド</b>：高値も安値も切り下がっている。基本は「売り」を探す場面。</li>
+      <li><b>レンジ（横ばい）</b>：一定の幅で行ったり来たり。方向がなく、最も難しい。初心者は基本「休む」。</li>
+    </ul>
+    <p>大切なのは、<b>3つのどれか判断できない時は無理に取引しない</b>ことです。「分からない」は立派な判断であり、休むこともトレードマネジメントの一部です。アスリートが試合のない日にしっかり休むのと同じで、待てる人ほど長く続けられます。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>具体例：USD/JPY の1日を読む</h2>
+    <p>たとえばUSD/JPYで、日足が高値・安値を切り上げて上昇トレンドだったとします。この時点で目線は「買い」に固定します。次に1時間足を見ると、上昇の途中で少し下げて押し目をつけている。ここで「買い目線のまま、押し目から入れる場所を探そう」と方針が決まります。</p>
+    <div class="ex">
+      <b>読み方の流れ</b><br>
+      ① 日足：上昇トレンド → 目線は「買い」<br>
+      ② 1時間足：押し目をつけている → 買いの準備<br>
+      ③ 5分足：下げ止まって上向きに転じた → ここで初めてエントリーを検討<br>
+      <br>
+      もし①の日足がレンジだったら？ → この日は「見送り」。無理に入らないことが正解です。
+    </div>
+    <p>このように、上から順に条件をそろえていき、すべて噛み合った時だけ動きます。条件が欠けたら見送る。派手さはありませんが、これが規律で勝つための土台です。</p>
+  </section>
+
+  <div class="interactive">
+    <div class="ttl">MINI TOOL — 環境認識の練習</div>
+    <div class="seg">
+      <div class="row"><label>上位足の方向</label><div class="opts" data-g="trend">
+        <button data-v="up">上昇</button><button data-v="range">レンジ</button><button data-v="down">下降</button>
+      </div></div>
+      <div class="row"><label>今の下位足の様子</label><div class="opts" data-g="pos">
+        <button data-v="pull">押し目／戻り</button><button data-v="mid">方向感なし</button>
+      </div></div>
+    </div>
+    <div class="env-out">
+      <span class="env-badge e-wait" id="eBadge">選んでください</span>
+      <span class="env-cmt" id="eCmt">上の2つを選ぶと、目線の目安が出ます。</span>
+    </div>
+  </div>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul>
+    <li>注文を出す前に、必ず日足・4時間足から順に見る習慣をつける。</li>
+    <li>今の相場が「上昇・下降・レンジ」のどれかを、毎回ひとことで言語化する。</li>
+    <li>上位足の目線に逆らうエントリーは、今日からやめる。</li>
+    <li>判断できない・分からない時は「見送り」を選ぶ。休むのも戦略。</li>
+  </ul></div>
+
+  <div class="related">
+    <a href="lesson-b2.html">次の単元：資金管理 ― 1〜2%ルール ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+
+<script>
+(function(){
+  var st={trend:null,pos:null};
+  document.querySelectorAll('.opts').forEach(function(g){
+    g.addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b)return;
+      g.querySelectorAll('button').forEach(function(x){x.classList.remove('on')});
+      b.classList.add('on'); st[g.dataset.g]=b.dataset.v; render();
+    });
+  });
+  function render(){
+    var badge=document.getElementById('eBadge'), cmt=document.getElementById('eCmt');
+    badge.className='env-badge';
+    if(!st.trend||!st.pos){badge.classList.add('e-wait');badge.textContent='選んでください';cmt.textContent='上の2つを選ぶと、目線の目安が出ます。';return;}
+    if(st.trend==='range'){badge.classList.add('e-wait');badge.textContent='見送り';cmt.textContent='上位足がレンジ。方向がなく難しい場面。初心者は休むのが正解です。';return;}
+    if(st.pos==='mid'){badge.classList.add('e-wait');badge.textContent='待ち';cmt.textContent='方向ははっきりしていますが、入る位置が定まっていません。押し目・戻りを待ちましょう。';return;}
+    if(st.trend==='up'){badge.classList.add('e-buy');badge.textContent='買い目線';cmt.textContent='上位足が上昇＋押し目。買いのタイミングを下位足で探す場面です。';}
+    else{badge.classList.add('e-sell');badge.textContent='売り目線';cmt.textContent='上位足が下降＋戻り。売りのタイミングを下位足で探す場面です。';}
+  }
+})();
+</script>
+</body>
+</html>

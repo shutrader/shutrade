@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CME FedWatchの使い方｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / CME FedWatchの使い方</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">上級 04</div>
+  <h1>CME FedWatchの使い方</h1>
+  <p class="lead">この単元を読むと、市場が利上げ・利下げをどれくらいの確率で織り込んでいるかを示す「CME FedWatch」の見方と、トレードへの活かし方がわかります。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>FedWatchは、市場が見込む<b>FOMCでの利上げ・利下げ確率</b>を数値で示すツール。</li><li>数字は予想ではなく<b>市場の織り込み（コンセンサス）</b>。これとのズレが値を動かす。</li><li>『すでに織り込み済みか』を知ると、<b>指標やFOMCの反応</b>を読みやすい。</li><li>確率は<b>日々変わる</b>。発表前後でどう動いたかを追う。</li></ul></div>
+
+  <section class="lesson">
+    <h2>FedWatchとは</h2>
+<p>CME FedWatchは、金利先物の価格から逆算して、次回以降のFOMCで<b>利上げ・利下げ・据え置きがどれくらいの確率で見込まれているか</b>を示すツールです。たとえば『次回利下げの確率70%』のように、市場全体の見込みが数字で分かります。</p><p>大切なのは、これが誰かの予想ではなく<b>市場参加者がお金を賭けた結果としての織り込み</b>だという点です。多数のプロの見立ての集約なので、現在の『コンセンサス（共通認識）』として信頼度が高い情報になります。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>織り込みとのズレが相場を動かす</h2>
+<p>相場は『サプライズ』で動きます。FedWatchを見ておくと、何がサプライズになるかを事前に把握できます。すでに高い確率で織り込まれていることが起きても相場はあまり動かず、織り込みと違う結果が出たときに大きく動きます。</p><div class="ex"><b>読み方の例</b><br>FedWatchで『据え置き90%』 → 実際に据え置き → ほぼ無風（織り込み済み）<br>FedWatchで『据え置き90%』 → まさかの利上げ → 強く反応（サプライズ）<br><br>『今の価格に、どんな未来が織り込まれているか』を知る道具です。</div>
+  </section>
+
+  <section class="lesson">
+    <h2>トレードへの活かし方</h2>
+<p>FedWatchは単体で売買サインにするものではなく、<b>環境認識の背景</b>として使います。前単元までのイベント対応と組み合わせると効果的です。</p><ul><li><b>FOMC前</b>：何が織り込まれているかを確認し、サプライズの方向を想定しておく（a2と連携）。</li><li><b>指標発表後</b>：強い／弱い指標で利上げ・利下げ確率がどう動いたかを見ると、為替の反応の理由が分かる。</li><li><b>日々の変化</b>：確率がじわじわ動くこと自体が、市場ムードの変化を表す。</li></ul><p>注意点として、確率はあくまで現時点の織り込みで、状況次第で急に変わります。『確率が高いから必ずそうなる』ではありません。背景情報として活用し、最終判断は自分のルール（環境認識・リスク管理）で行います。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>確率の急変が教えてくれること</h2>
+<p>FedWatchの確率は固定ではなく、経済指標や要人発言のたびに動きます。この<b>確率の変化そのもの</b>が、相場を読むヒントになります。たとえば強い雇用統計で『利下げ確率が大きく低下』すれば、市場が引き締め方向に見方を変えたサインで、ドルが買われる背景になります。</p><p>つまり、結果の数字だけでなく『その結果で<b>市場の織り込みがどちらへ動いたか</b>』を追うと、為替の反応に納得がいきます。確率がほとんど動かなければ『織り込み済み』、大きく動けば『見方が変わった』。FedWatchは、市場心理の変化を数字で追えるレーダーとして使えます。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>FOMC前に、市場が織り込んでいる確率を確認する。</li><li>『すでに織り込み済みか』『何がサプライズか』を整理する。</li><li>指標発表の前後で確率がどう動いたかを追う。</li><li>FedWatchは背景情報とし、売買サインにはしない。</li><li>確率は変わるものと理解し、最終判断は自分のルールで行う。</li></ul></div>
+
+  <div class="related">
+    <a href="lesson-a5.html">次の単元：実質金利とゴールド ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>

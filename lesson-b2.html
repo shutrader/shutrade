@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資金管理 ― 1〜2%ルール｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+  /* lesson */
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"✓";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+
+  /* interactive */
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:120px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / 資金管理 ― 1〜2%ルール</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">初級 02</div>
+  <h1>資金管理 ― 1〜2%ルール</h1>
+  <p class="lead">この単元を読むと、1回のトレードでいくらまで失ってよいかを先に決め、退場しない資金の守り方が身につきます。手法より先に、まずここを固めます。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul>
+    <li>勝つことより前に、<b>大きく負けないこと</b>。生き残れば挽回のチャンスは何度でも来る。</li>
+    <li>1回の損失は口座資金の<b>1〜2%まで</b>に抑える。これが1〜2%ルール。</li>
+    <li>許容損失額（円）を先に決め、それに合わせて<b>ロット（取引量）を逆算</b>する。順番が逆だと破綻する。</li>
+    <li>連敗しても資金はゆっくりしか減らない。だから冷静でいられ、規律を保てる。</li>
+  </ul></div>
+
+  <section class="lesson">
+    <h2>なぜ「勝ち方」より「守り方」が先なのか</h2>
+    <p>トレードで一番大事なのは、相場から退場しないことです。どんなに良い手法を持っていても、1回の大きな負けで資金の大半を失えば、そこで終わりです。逆に資金さえ残っていれば、相場は明日も明後日も開いていて、挽回の機会は何度でもやってきます。</p>
+    <p>これはアスリートのケガ予防と同じ発想です。試合で活躍するための派手な練習より先に、ケガをしない身体づくり・休養の管理がある。地味ですが、これを怠ると選手生命そのものが終わります。トレードにおける資金管理は、まさにこの「ケガをしない管理」にあたります。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>1〜2%ルールとは</h2>
+    <p>1〜2%ルールとは、<b>1回のトレードで失ってよい金額を、口座資金の1〜2%までに制限する</b>という考え方です。たとえば資金が30万円なら、2%は6,000円。1回の損切りでこの6,000円以上は失わないように設計します。</p>
+    <p>大切なのは、「勝ったらいくら」ではなく「負けたらいくらまで」を先に決めることです。利益は相場が決めますが、損失は自分でコントロールできます。コントロールできる方を先に握る。これが資金管理の核心です。</p>
+    <p>連敗したらどうなるか、具体的に見てみましょう。仮に1回2%の損失で5連敗しても、資金は約9割残ります。これなら冷静さを保てます。一方、1回で20%失う取引をしていたら、たった2連敗で資金は6割近くまで減り、取り返そうと熱くなって、さらに崩れていきます。</p>
+    <table class="t">
+      <tr><th>1回の損失</th><th>5連敗後に残る資金（30万円スタート）</th><th>心理状態</th></tr>
+      <tr><td class="mono">2%</td><td class="mono">約 27.1万円</td><td>冷静でいられる</td></tr>
+      <tr><td class="mono">10%</td><td class="mono">約 17.7万円</td><td>焦りが出る</td></tr>
+      <tr><td class="mono">20%</td><td class="mono">約 9.8万円</td><td>取り返そうと暴走しやすい</td></tr>
+    </table>
+  </section>
+
+  <section class="lesson">
+    <h2>ロットは「逆算」で決める</h2>
+    <p>初心者がやりがちな失敗は、先に「○ロットで入ろう」と取引量を決めてしまうことです。正しい順番は逆で、<b>①許容損失額を決める → ②損切りまでの値幅を決める → ③そこからロットを逆算する</b>です。</p>
+    <ol>
+      <li><b>許容損失額</b>を決める：資金30万円 × 2% = 6,000円。</li>
+      <li><b>損切り幅</b>を決める：環境認識をもとに「ここを抜けたら間違い」という位置までの距離（例：20pips）。</li>
+      <li><b>ロットを逆算</b>：6,000円を20pipsで割り切れる取引量にする。損切り幅が広いほどロットは小さくなる。</li>
+    </ol>
+    <div class="ex">
+      <b>同じ6,000円でも、損切り幅でロットは変わる</b><br>
+      ・損切り20pips → 1pipあたり300円までOK → ロットは小さめ<br>
+      ・損切り60pips → 1pipあたり100円までOK → ロットはさらに小さく<br>
+      <br>
+      「広い損切りなのに大きいロット」は、リスクの取りすぎ。逆算すれば自然に防げます。具体的な計算は <b>ロット計算ツール</b> に任せれば一瞬です。
+    </div>
+  </section>
+
+  <div class="interactive">
+    <div class="ttl">MINI TOOL — 許容損失額をだそう</div>
+    <div class="calc-row">
+      <label for="bal">口座資金（円）</label>
+      <input id="bal" type="number" inputmode="numeric" min="0" step="10000" value="300000">
+    </div>
+    <div class="calc-row">
+      <label>リスク許容度</label>
+      <div class="seg-pct" id="pct">
+        <button data-v="1">1%</button><button data-v="2" class="on">2%</button>
+      </div>
+    </div>
+    <div class="calc-out">
+      <span class="lbl">1回の許容損失額：</span>
+      <span class="val mono" id="out">6,000 円</span>
+    </div>
+    <p class="calc-note">この金額を超える損切りはしない、と決めるだけでOK。実際のロット数までだしたい時は、下の「ロット計算ツール」へ。</p>
+  </div>
+
+  <section class="lesson">
+    <h2>ルールを守り続けるコツ</h2>
+    <p>1〜2%ルールは知るのは簡単ですが、守り続けるのが難しいルールです。勝ちが続くと「今回はいけそう」とロットを上げたくなり、負けが込むと「一気に取り返したい」と大きく張りたくなります。どちらも資金管理が崩れる典型です。</p>
+    <p>守るコツは、感情が動く前に仕組みで縛ることです。エントリー前に許容損失額とロットを先に計算し、メモしておく。そして相場が動いている最中はルールを変えない。アスリートが試合前に決めた戦略を、興奮した試合中に思いつきで変えないのと同じです。ルールは冷静な時に決め、熱い時には従うだけにします。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul>
+    <li>自分の口座資金の1%・2%がそれぞれ何円か、今すぐ計算して把握する。</li>
+    <li>エントリー前に「今回の許容損失額」を必ず先に決める。</li>
+    <li>ロットは損失額と損切り幅から逆算する。先にロットを決めない。</li>
+    <li>勝っても負けても、相場が動いている最中にルールを変えない。</li>
+    <li>連敗した日は、ロットを上げず、むしろ手を止めて見直す。</li>
+  </ul></div>
+
+  <div class="related">
+    <a href="lot-calculator.html">関連ツール：ロット計算 ›</a>
+    <a href="lesson-b3.html">次の単元：損切りをルール化する ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+
+<script>
+(function(){
+  var bal=document.getElementById('bal'),out=document.getElementById('out'),pct=2;
+  document.getElementById('pct').addEventListener('click',function(e){
+    var b=e.target.closest('button'); if(!b)return;
+    this.querySelectorAll('button').forEach(function(x){x.classList.remove('on')});
+    b.classList.add('on'); pct=+b.dataset.v; render();
+  });
+  bal.addEventListener('input',render);
+  function render(){
+    var v=parseFloat(bal.value);
+    if(isNaN(v)||v<0){out.textContent='— 円';return;}
+    var amt=Math.round(v*pct/100);
+    out.textContent=amt.toLocaleString('ja-JP')+' 円';
+  }
+  render();
+})();
+</script>
+</body>
+</html>

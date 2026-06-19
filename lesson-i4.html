@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>インジケーターの本当の使い方｜シュウ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--navy:#182a4e;--navy-deep:#0f1d38;--paper:#FAF9F6;--card:#fff;--gold:#C9A14A;--gold-deep:#9A7726;--ink:#1F2933;--muted:#6E7177;--faint:#9AA0A8;--line:rgba(15,29,56,.10);--line-strong:rgba(15,29,56,.18);--ok:#3B7D5A;--warn:#A77B1E;--bad:#A3403A}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  .mono{font-family:'Roboto Mono',monospace;font-variant-numeric:tabular-nums}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px}
+  a{color:inherit;text-decoration:none}
+  button{font-family:inherit;cursor:pointer}
+  :focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+  header{background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:.5px solid var(--line);position:sticky;top:0;z-index:5}
+  .bar{display:flex;align-items:center;height:58px;gap:14px}
+  .back{font-size:13px;color:var(--navy);display:inline-flex;align-items:center;gap:6px}
+  .back:hover{color:var(--gold-deep)}
+  .bar .sep{color:var(--faint)}
+  .bar .here{font-size:13px;color:var(--muted)}
+  main{padding:38px 0 60px}
+  .kicker{font-family:'Roboto Mono',monospace;font-size:12px;letter-spacing:.24em;color:var(--gold-deep);margin-bottom:8px}
+  h1{font-weight:700;font-size:26px;color:var(--navy);margin-bottom:6px}
+  footer{border-top:.5px solid var(--line);margin-top:36px;padding-top:18px}
+  .disc{font-size:11px;color:var(--faint);line-height:1.8}
+  @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+  .lead{font-size:15px;color:var(--muted);line-height:1.9;margin-bottom:24px;max-width:40em}
+  .conclusion{background:#fbfaf6;border:.5px solid rgba(201,161,74,.35);border-radius:12px;padding:18px 22px;margin-bottom:30px}
+  .conclusion h2{font-size:15px;color:var(--gold-deep);margin-bottom:8px}
+  .conclusion ul{margin-left:1.1em;font-size:14px;line-height:1.9}
+  section.lesson{margin-bottom:30px}
+  section.lesson h2{font-size:18px;color:var(--navy);font-weight:700;margin-bottom:10px}
+  section.lesson h3{font-size:15px;color:var(--navy);font-weight:500;margin:16px 0 6px}
+  section.lesson p{font-size:15px;line-height:1.9;margin-bottom:12px}
+  section.lesson ul,section.lesson ol{margin:0 0 12px 1.2em;font-size:14.5px;line-height:1.9}
+  section.lesson li{margin-bottom:4px}
+  .ex{background:var(--card);border:.5px solid var(--line);border-left:3px solid var(--gold);border-radius:8px;padding:14px 18px;margin:14px 0;font-size:14px;line-height:1.85}
+  .ex b{color:var(--navy)}
+  table.t{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+  table.t th,table.t td{border:.5px solid var(--line);padding:9px 12px;text-align:left;vertical-align:top}
+  table.t th{background:#fbfaf6;color:var(--navy);font-weight:500}
+  table.t td.mono{font-family:'Roboto Mono',monospace}
+  .checklist{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:18px 22px;margin:28px 0}
+  .checklist h2{font-size:16px;color:var(--navy);margin-bottom:10px}
+  .checklist ul{list-style:none}
+  .checklist li{font-size:14px;line-height:1.9;padding-left:26px;position:relative;margin-bottom:4px}
+  .checklist li::before{content:"\2713";position:absolute;left:4px;color:var(--gold-deep);font-weight:700}
+  .related{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+  .related a{font-size:13px;color:var(--navy);border:.5px solid var(--line-strong);border-radius:8px;padding:9px 14px;transition:border-color .15s}
+  .related a:hover{border-color:var(--gold)}
+  .interactive{background:var(--card);border:.5px solid var(--line);border-radius:12px;padding:20px 22px;margin:18px 0}
+  .interactive .ttl{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.16em;color:var(--gold-deep);margin-bottom:14px}
+  .calc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .calc-row label{font-size:12px;color:var(--muted);width:140px;flex-shrink:0}
+  .calc-row input{flex:1;min-width:120px;font-family:'Roboto Mono',monospace;font-size:14px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:10px 12px}
+  .calc-row input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,161,74,.15)}
+  .seg-pct{display:flex;gap:8px;flex-wrap:wrap}
+  .seg-pct button{font-family:'Roboto Mono',monospace;font-size:13px;color:var(--ink);background:#fff;border:.5px solid var(--line-strong);border-radius:8px;padding:9px 16px;transition:.12s}
+  .seg-pct button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .calc-out{margin-top:6px;border-top:.5px solid var(--line);padding-top:16px;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .calc-out .lbl{font-size:13px;color:var(--muted)}
+  .calc-out .val{font-family:'Roboto Mono',monospace;font-weight:500;font-size:24px;color:var(--navy)}
+  .calc-note{font-size:12px;color:var(--faint);margin-top:10px;line-height:1.7}
+</style>
+</head>
+<body>
+<header><div class="wrap bar">
+  <a class="back" href="index.html">‹ シュウ トレードマネジメント</a>
+  <span class="sep">/</span><span class="here">カリキュラム / インジケーターの本当の使い方</span>
+</div></header>
+
+<main class="wrap">
+  <div class="kicker">中級 04</div>
+  <h1>インジケーターの本当の使い方</h1>
+  <p class="lead">この単元を読むと、インジケーターを「売買サインの自動装置」ではなく、環境認識を補助する道具として正しく使えるようになります。使い方を誤ると逆効果になります。</p>
+
+  <div class="conclusion"><h2>この単元の結論</h2><ul><li>インジケーターは<b>補助</b>。主役はあくまで価格（ローソク足）と環境認識。</li><li>種類は2つだけ理解すればよい：<b>トレンド系</b>と<b>オシレーター系</b>。</li><li>数を増やすほど良くなるわけではない。<b>役割の違う2つ程度</b>に絞る。</li><li>インジは過去の価格から計算される＝<b>遅れる</b>。サインの後追いに注意。</li></ul></div>
+
+  <section class="lesson">
+    <h2>主役は価格、インジは脇役</h2>
+<p>インジケーターを『これが点灯したら買い』という自動サイン装置だと思っていると、必ず行き詰まります。インジケーターはすべて、過去の価格を計算して表示しているだけで、価格そのものより必ず<b>遅れて</b>動きます。だから、インジ任せのトレードはサインの後追いになりがちです。</p><p>正しい立ち位置は、主役は価格（ローソク足）と環境認識、インジはそれを<b>補助・確認する脇役</b>です。価格で読んだ判断を、インジで裏付ける。この順番を守ることが何より大切です。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>2種類だけ理解すればいい</h2>
+<p>世の中には無数のインジがありますが、役割で分ければ大きく2種類です。これだけ理解すれば十分です。</p><table class="t"><tr><th>種類</th><th>代表例</th><th>分かること</th><th>苦手な場面</th></tr><tr><td>トレンド系</td><td>移動平均線</td><td>方向と勢い</td><td>レンジでダマシが増える</td></tr><tr><td>オシレーター系</td><td>RSI など</td><td>買われすぎ・売られすぎ</td><td>強いトレンドで張り付く</td></tr></table><p>重要なのは、両者は<b>得意な相場が逆</b>だということです。トレンド系はトレンド相場で、オシレーター系はレンジ相場で力を発揮します。今がどちらの相場か（環境認識）が分かっていないと、インジは正しく使えません。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>組み合わせは『役割の違う2つ』まで</h2>
+<p>初心者ほど、たくさんのインジを表示して安心しようとします。ですが、同じトレンド系を3つ並べても、似た情報が重なるだけで判断は良くなりません。むしろ画面が混乱します。</p><div class="ex"><b>良い組み合わせの考え方</b><br>トレンド系（移動平均線）で方向を確認 ＋ オシレーター系（RSI）で行きすぎを確認<br>→ 役割が違うので、互いを補える<br><br><b>避けたい例</b>：移動平均線＋一目＋ボリンジャー…とトレンド系を重ねる（情報が重複）。</div><p>役割の違うインジを2つ程度に絞り、あくまで価格判断の確認に使う。これがインジケーターの本当の使い方です。</p>
+  </section>
+
+  <section class="lesson">
+    <h2>ダイバージェンスの見方と注意</h2>
+<p>オシレーター系の応用に<b>ダイバージェンス（逆行現象）</b>があります。価格は高値を更新しているのに、RSIなどの指標は高値を切り下げている——という『価格と指標のズレ』で、トレンドの勢いが衰えているサインとされます。転換の予兆を早めに捉えられる、便利な見方です。</p><p>ただし注意が必要で、ダイバージェンスは<b>出てもトレンドがそのまま続くこと</b>がよくあります。特に強いトレンドでは、ズレが出ても価格はぐんぐん伸び、逆張りした人が損をします。ダイバージェンスは『そろそろ警戒』の補助サインにとどめ、実際に転換の形（前単元のパターン）が確認できてから動くのが安全です。</p>
+    <p>インジの設定（期間など）をむやみにいじって『当たる数値』を探すのは避けましょう。それは過去に合わせ込んでいるだけで、未来には通用しません。標準的な設定のまま、価格判断の確認に使うのが堅実です。</p>
+  </section>
+
+  <div class="checklist"><h2>実践チェックリスト</h2><ul><li>価格（ローソク足）と環境認識を先に読み、インジは確認に使う。</li><li>今がトレンド相場かレンジ相場かを判断してからインジを見る。</li><li>トレンド系とオシレーター系の得意な相場の違いを意識する。</li><li>表示するインジは役割の違う2つ程度に絞る。</li><li>インジのサインは遅れることを前提に、後追いを避ける。</li></ul></div>
+
+  <div class="related">
+    <a href="lesson-i5.html">次の単元：エントリーとイグジットの設計 ›</a>
+  </div>
+
+  <footer><p class="disc">※本ページは投資教育を目的とした内容であり、特定の金融商品の売買を推奨・助言するものではありません。投資の最終判断はご自身の責任において行ってください。</p></footer>
+</main>
+</body>
+</html>
