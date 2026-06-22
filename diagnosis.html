@@ -64,6 +64,11 @@
   .chips a{font-size:13px;background:var(--card);border:.5px solid var(--line-strong);border-radius:20px;padding:8px 15px}
   .chips a:hover{border-color:var(--gold)}
   .cta-line{display:block;text-align:center;background:var(--gold);color:#2a2008;font-weight:500;font-size:14px;padding:13px;border-radius:10px;margin-top:8px}
+  .kwbox{background:#fbfaf6;border:1px solid rgba(201,161,74,.45);border-radius:12px;padding:16px 18px;text-align:center;margin-bottom:14px}
+  .kwlabel{font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.18em;color:var(--gold-deep);margin-bottom:4px}
+  .kw{font-family:'Roboto Mono',monospace;font-weight:500;font-size:26px;color:var(--navy);letter-spacing:.04em}
+  .kwsteps{margin:0 0 16px 1.2em;padding:0}
+  .kwsteps li{font-size:13.5px;color:var(--ink);line-height:1.9}
   .restart{display:block;margin:20px auto 0;}
   footer{border-top:.5px solid var(--line);margin-top:30px;padding-top:18px}
   .disc{font-size:11px;color:var(--faint);line-height:1.8}
@@ -127,7 +132,7 @@ const QUESTIONS=[
  ]},
  {key:"cap",q:"運用資金の規模は？",type:"single",opts:[
    {l:"〜10万円",t:["cap-small"]},{l:"10〜50万円",t:["cap-mid"]},
-   {l:"50〜300万円",t:["cap-large"]},{l:"300万円〜",t:["cap-xlarge"]},
+   {l:"50〜300万円",t:["cap-large","cap-big"]},{l:"300万円〜",t:["cap-xlarge","cap-big"]},
  ]},
  {key:"prob",q:"いま一番の悩みは？（複数選択可）",type:"multi",opts:[
    {l:"損切りができない",t:["p-losscut"]},{l:"手法が定まらない（コロコロ変える）",t:["p-nomethod"]},
@@ -157,6 +162,16 @@ const MODULES=[
  {w:"gold",h:"ゴールド（XAU/USD）の特性",b:"ボラティリティが大きく、pipsよりドル値幅で考えるのが基本。実質金利との逆相関を押さえると、見通しが立てやすくなります。",L:["a5","b5"],T:[]},
  {w:"usdjpy",h:"USD/JPYの特性",b:"仲値・ゴトー日のクセ、日米金利差、介入の警戒帯を意識。東京時間の値動きの特徴を知っておくと立ち回りやすくなります。",L:["b5","a1"],T:["sess"]},
  {w:"crypto",h:"暗号資産の注意点",b:"株など全体のリスク選好に連動しやすく、ドル指標との連動は弱め。ボラが極端なので、ロットとリスク管理を特に厳しめに。",L:[],T:["lot"]},
+ {w:"intermediate",h:"中級の壁を越える",b:"基本はわかるのに勝ちきれない時期は、検証で“自分の優位性”を数字にするのが突破口です。手法を増やすより、1つを磨き込むほうが近道。",L:["i7"],T:["jr"]},
+ {w:"scalp",h:"スキャル志向のあなたへ",b:"回数で勝負する分、スプレッドと約定スピードが命。1回の利幅が小さいので、損切りの即時実行とメンタルの安定が特に重要です。",L:["b3","b4"],T:[]},
+ {w:"day",h:"デイトレ志向のあなたへ",b:"1日内で完結させるスタイル。指標の時間帯とボラの波を把握し、環境認識→エントリーの型を固めると安定します。",L:["b1","a3"],T:["sess","ind"]},
+ {w:"swing",h:"スイング志向のあなたへ",b:"数日〜のポジション。上位足の環境認識と、保有中にまたぐ指標・イベントのリスク管理がカギです。",L:["i2","a2"],T:["scn"]},
+ {w:"style-x",h:"スタイルが決まっていないあなたへ",b:"まずは“使える時間”に合うスタイルを1つ選び、一定期間やりきって検証を。兼業ならデイ〜スイングが現実的です。",L:["i7"],T:[]},
+ {w:"g-reduce",h:"“負けを減らす”が目標のあなたへ",b:"勝ちにいく前に、退場しない土台（損切りルール＋資金管理）から。守りが利益を生みます。",L:["b3","b2"],T:["lot"]},
+ {w:"g-steady",h:"“コツコツ増やす”が目標のあなたへ",b:"一回の大勝より、期待値プラスを積み重ねる設計を。複利の力を味方につけましょう。",L:["i6"],T:["comp","jr"]},
+ {w:"g-big",h:"“大きく伸ばす”が目標のあなたへ",b:"リターンを狙うほどリスク管理が前提条件。ロットを上げる前に、勝率とRRを数字で確認してから。",L:["i6"],T:["rr","jr"]},
+ {w:"g-system",h:"“体系化したい”が目標のあなたへ",b:"点ではなく線で。カリキュラムを初級→上級まで順番に進めると、判断がブレなくなります。",L:[],T:[]},
+ {w:"cap-big",h:"資金に余裕があるあなたへ",b:"資金が大きいほど、1〜2%でも1回の金額が大きくなります。金額ベースでも許容損失を意識し、分割エントリーで一点集中を避けましょう。",L:["b2"],T:["lot"]},
 ];
 
 const PATHS={beginner:["b1","b2","b3","b4","b5","b6"],intermediate:["i1","i2","i3","i4","i5","i6","i7","i8"],advanced:["a1","a2","a3","a4","a5","a6","a7"]};
@@ -208,6 +223,8 @@ function finish(){
  const probMap={'p-losscut':'損切り','p-nomethod':'手法の確立','p-nocontext':'環境認識','p-money':'資金管理','p-mental':'メンタル','p-noreview':'検証・振り返り','p-funda':'ファンダ'};
  const firstProb=(QUESTIONS.find(q=>q.key==='prob').opts.map(o=>o.t[0]).find(t=>has(t)));
  const probL=firstProb?probMap[firstProb]:null;
+ const PATTERN={'p-losscut':{k:'損切り型',n:'損切りができないタイプ'},'p-nomethod':{k:'手法型',n:'手法が定まらないタイプ'},'p-nocontext':{k:'環境認識型',n:'環境認識が苦手なタイプ'},'p-money':{k:'資金管理型',n:'資金管理が課題のタイプ'},'p-mental':{k:'メンタル型',n:'メンタルが課題のタイプ'},'p-noreview':{k:'検証型',n:'検証・振り返り不足のタイプ'},'p-funda':{k:'ファンダ型',n:'ファンダが苦手なタイプ'}};
+ const pat=PATTERN[firstProb]||PATTERN['p-losscut'];
 
  const mods=MODULES.filter(m=>has(m.w));
  const linkL=id=>`<a href="${LESSONS[id][1]}">${LESSONS[id][0]} ›</a>`;
@@ -246,9 +263,15 @@ function finish(){
   ${toolHtml?`<div class="rsec"><h2>使うとよいツール</h2><div class="rh">今日から判断を助けてくれる道具です。</div><div class="chips">${toolHtml}</div></div>`:''}
 
   <div class="rsec">
-    <h2>つまずいたら相談を</h2>
-    <div class="rh">診断で拾いきれない個別の疑問は、LINEで直接お答えします。</div>
-    <a class="cta-line" href="${LINE_URL}" target="_blank" rel="noopener">LINEで相談する</a>
+    <h2>LINEで「あなた専用」の詳しい解説を受け取る</h2>
+    <div class="rh">あなたは「${pat.n}」。このタイプ向けの、より詳しい解説と"取り組むべきこと"・専用資料をLINEでお届けします。</div>
+    <div class="kwbox"><div class="kwlabel">あなたのキーワード</div><div class="kw">${pat.k}</div></div>
+    <ol class="kwsteps">
+      <li>下のボタンからLINEを友だち追加</li>
+      <li>キーワード「<b>${pat.k}</b>」をそのまま送信</li>
+      <li>あなた専用の詳しい解説と資料が届きます</li>
+    </ol>
+    <a class="cta-line" href="${LINE_URL}" target="_blank" rel="noopener">LINEを友だち追加して受け取る</a>
   </div>
 
   <button class="btn-ghost restart" id="restart">もう一度診断する</button>`;
